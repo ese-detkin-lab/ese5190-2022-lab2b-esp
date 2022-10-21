@@ -86,31 +86,9 @@ For your circuit board proposals, edit this page as follows and submit a pull re
 | Xiayu                                     | [**:octocat:**](https://github.com/Xiaayu)                                                      |                                                                                                                                                         |
 | Chongyuan                                 | [**:octocat:**](https://github.com/Ryan66666)                                                   |                                                                                                                                                         |
 | Zihan                                     | [**:octocat:**](https://github.com/zizhanghan)                                                  |                                                                                                                                                         |
-| Junpeng                                   | [**:octocat:**](https://github.com/PZZ97)                                                       | [`📌`](https://github.com/PZZ97/ese5190-2022-lab2b-esp)                                                                                                                                                       |
+| Junpeng                                   | [**:octocat:**](https://github.com/PZZ97)                                                       | [`📌`](https://github.com/PZZ97/ese519-lab2b-all)                                                                                                                                                       |
 | Lihong                                    | [**:octocat:**](https://github.com/lihzhao14)                                                   |                                                                                                                                                         |
 | Yangbo                                    | [**:octocat:**](https://github.com/yangbozh)                                                    |                                                                                                                                                         |
 | Xuanbiao                                  | [**:octocat:**](https://github.com/AkoZhu)                                                      |                                                                                                                                                         |
-
-# gif
-<img src=".\gif\video.gif" style="zoom:70%"> <br> 
-<!-- * [adafruit digital In/Out](https://learn.adafruit.com/arduino-to-circuitpython/digital-in-out)
-* [Adafruit Pinouts](https://learn.adafruit.com/adafruit-qt-py/pinouts) -->
-
-# Outline of plan
-using RFID to identify different people and then activating a countdown for capturing photo. The RFID gives each photo a unqiue tag to identify from others. After that,  display output to the screen.
-Control flow:
-RFID => Camera => QT Py RP2040 => Screen 
-
-<img src=".\gif\diagram.jpg" style="zoom:70%"> <br> 
-
-# Components
-|Components|Quantity|
-|---|---|
-|ArduCAM 2MP|1|
-|160*128 TFT Display|1|
-|8GB SD Card|1|
-|5V Battery set| 1|
-|RFID Kit|1|
-|Wires|many|
 
 
