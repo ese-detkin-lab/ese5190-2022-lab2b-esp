@@ -1,5 +1,6 @@
 # 2B submission dashboard
 
+
 For your circuit board proposals, edit this page as follows and submit a pull request:
 1. Check your name (imported from canvas) and change to your preferred name/nickname, if applicable
 2. Double-check your github account handle (click the **:octocat:**)
@@ -86,7 +87,9 @@ For your circuit board proposals, edit this page as follows and submit a pull re
 | Xiayu                                     | [**:octocat:**](https://github.com/Xiaayu)                                                      |                                                                                                                                                         |
 | Chongyuan                                 | [**:octocat:**](https://github.com/Ryan66666)                                                   |[`📌`](https://github.com/Ryan66666/lab2bproposal)                                                                                               |
 | Zihan                                     | [**:octocat:**](https://github.com/zizhanghan)                                                  |                                                                                                                                                         |
-| Junpeng                                   | [**:octocat:**](https://github.com/PZZ97)                                                       |                                                                                                                                                         |
+| Junpeng                                   | [**:octocat:**](https://github.com/PZZ97)                                                       | [`📌`](https://github.com/PZZ97/ese519-lab2b-all)                                                                                                       |
 | Lihong                                    | [**:octocat:**](https://github.com/lihzhao14)                                                   | [`📌`](https://github.com/lihzhao14/ese-5190-lab2-B/blob/main/Proposal.md)                                                                           |
 | Yangbo                                    | [**:octocat:**](https://github.com/yangbozh)                                                    |                                                                                                                                                         |
 | Xuanbiao                                  | [**:octocat:**](https://github.com/AkoZhu)                                                      |                                                                                                                                                         |
+
+
