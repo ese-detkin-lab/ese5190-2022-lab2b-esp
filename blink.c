@@ -8,11 +8,12 @@ int main() {
     gpio_init(LED_PIN);
     gpio_set_dir(LED_PIN, GPIO_OUT);
     while (true) {
-
-        printf( "Enter a value :\n");
-        scanf("%d",&i);
-        gpio_put(LED_PIN, i);
-        printf( "you print: %d\n", i);
+        gpio_put(LED_PIN, 1);
+        printf( "True\n");
+        sleep_ms(500);
+        gpio_put(LED_PIN, 0);
+        sleep_ms(500);
+        printf( "False\n");
     }
     return 0;
 }
