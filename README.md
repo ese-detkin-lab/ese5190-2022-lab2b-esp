@@ -5,6 +5,7 @@
 
 
 2. Proposal 
+
 Outline
 We are planning to build a ESPL system that could let us directly W/R data to the registers to the broad rather than calling SDK or upper-level functions. We are going to explore it in the next lab session and show up our builds. 
 
