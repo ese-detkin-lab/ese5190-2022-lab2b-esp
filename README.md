@@ -1,6 +1,6 @@
+# 2B submission dashboard
 
 
-# 2B-Submission-Dashboard #
 For your circuit board proposals, edit this page as follows and submit a pull request:
 1. Check your name (imported from canvas) and change to your preferred name/nickname, if applicable
 2. Double-check your github account handle (click the **:octocat:**)
