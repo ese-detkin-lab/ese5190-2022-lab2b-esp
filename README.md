@@ -1,11 +1,8 @@
-# 2B submission dashboard
-
-
-https://github.com/AkshayaBhati/Lab-2B-Submission-Dashboard
-
 
 
 # Lab-2B-Submission-Dashboard
+
+https://github.com/AkshayaBhati/Lab-2B-Submission-Dashboard
 
 ## Blinking the LED ##
 
