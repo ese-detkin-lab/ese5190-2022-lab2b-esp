@@ -3,7 +3,7 @@
 First, use GPIO to light up the LED, here's a brief .gif to show this:
 
 <p align="center">
-    <img src="assets\ezgif-3-0d3b8d071d.gif" width=25% height=25% />
+    <img src="assets\led_gpio.gif" width=25% height=25% />
 </p>
 
 ## Proposal Outline
