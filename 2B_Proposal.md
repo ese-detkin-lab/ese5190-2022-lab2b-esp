@@ -15,6 +15,7 @@ We will create different combinations:
 ### Components
 - RP2040 microcontroller
 - RGB LEDs
+- LED Matrix (8x8 or 16x32)
 - Buzzer
 - Pushbuttons
 - Multiple 100 Ohm Resistors
