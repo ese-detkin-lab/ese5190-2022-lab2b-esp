@@ -8,7 +8,7 @@ using RFID to identify different people and then activating a countdown for capt
 Control flow:
 RFID => Camera => QT Py RP2040 => Screen 
 
-<img src=".\gif\diagram.jpg" style="zoom:70%"> <br> 
+<img src=".\gif\diagram.jpg" style="zoom:30%"> <br> 
 
 # Components
 |Components|Quantity|
