@@ -6,6 +6,7 @@
 
 The following link contains the link to the gif file for the Lab2B Preview.
 
+https://github.com/skyfall88888/ese5190-2022-lab2b-esp/blob/main/LAB2B_Preview.GIF
 
 
 ### Outline
