@@ -18,7 +18,10 @@ Block Diagram:
 
 # Mini Project Results - Car Indicator 
 
-<img src = "proposal/Mini_project.gif">
+<img src = "proposal/WhatsApp Video 2022-11-04 at 5.49.13 PM.mp4">
+
+
+<img src = "proposal/WhatsApp Video 2022-11-04 at 5.49.32 PM.mp4">
 
 
 
