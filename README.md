@@ -16,4 +16,9 @@ Block Diagram:
 10 LED lights, 10 resistors, wires.
 
 
+# Mini Project Results - Car Indicator 
+
+<img src = "proposal/Mini_project.gif">
+
+
 
