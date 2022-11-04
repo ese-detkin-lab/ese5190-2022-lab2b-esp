@@ -4,7 +4,7 @@
 
 # The Proposal - Direction indicators for cars
 
-We will be using the gesture sensing ability from lab 1 to check if the hand motion is right or left. Then 10 LED lights placed in a particular structure will blink and form a corresponding pattern of right ot left arrow. This whole concept somewhat resembles car's rear indicators. 
+We will be using 10 LED lights placed in a particular structure will blink and form a corresponding pattern of right ot left arrow. The slider witch will indicate the direction right or left and a push button to switch this circuit on or off. This whole concept somewhat resembles car's rear indicators. 
 
 Block Diagram:
 
