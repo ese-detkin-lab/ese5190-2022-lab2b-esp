@@ -41,9 +41,11 @@ ___
 | ![AgIntDtCap_3](https://github.com/Aurunima/ESE5190-Fall22-Lab2B/blob/main/img/AgIntDtCap_3.png) |
 |:--:|
 - Ensure that '_Get Screen Image_' and '_Use Current Acquisition_' are checked and nothing else is checked > _OK_
+___
 | ![AgIntDtCap_4](https://github.com/Aurunima/ESE5190-Fall22-Lab2B/blob/main/img/AgIntDtCap_4.png) |
 |:--:|
 | ![AgIntDtCap_5](https://github.com/Aurunima/ESE5190-Fall22-Lab2B/blob/main/img/AgIntDtCap_5.png) |
 - Then save the image; good job.
+___
 | ![AgIntDtCap_6](https://github.com/Aurunima/ESE5190-Fall22-Lab2B/blob/main/img/AgIntDtCap_6.png) |
 |:--:|
