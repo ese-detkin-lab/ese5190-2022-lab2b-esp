@@ -8,7 +8,7 @@ We will be using 10 LED lights placed in a particular structure will blink and f
 
 Block Diagram:
 
-<img src="Block_d.JPG">
+<img src="proposal/mini_project.JPG">
 
 
 # Components Required 
