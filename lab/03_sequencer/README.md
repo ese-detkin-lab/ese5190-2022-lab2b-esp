@@ -13,3 +13,8 @@ Create a 'sequencer' that allows you to record BOOT button presses and play them
     - outputs: neopixel color, neopixel brightness, data over serial, register read/write commands
 
 
+### My Notes
+
+Partially implemented - compiles, but doesn't do anything. Have mostly established the protocol that the Python companion app will use.
+
+
