@@ -13,6 +13,6 @@ The Y(right) probe is connected to SDA and GND(black wire).
 
 The result shows on oscilloscope as follows:
 
-![a]()
+![a](https://github.com/HaoliangYou/ese5190-2022-lab2b-esp/blob/main/lab/05_i2c_traffic/1.jpg)
 
-![a]()
+![a](https://github.com/HaoliangYou/ese5190-2022-lab2b-esp/blob/main/lab/05_i2c_traffic/2.jpg)
