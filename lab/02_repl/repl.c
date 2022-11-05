@@ -179,7 +179,7 @@ int main() {
     gpio_init(QTPY_BOOT_PIN);
     gpio_set_dir(QTPY_BOOT_PIN, GPIO_IN);
     neopixel_init();
-
+    neopixel_set_rgb(0x1);
     sleep_ms(1000);
     while(!stdio_usb_connected());
     data.value = 0;
@@ -234,7 +234,7 @@ int main() {
                     break;
                 case 'B':
                 case 'b':
-                    *data.address |= (data.value & data.mask);
+                    *data.address = (data.value & data.mask);
                     break;
                 case 'R':
                 case 'r':
