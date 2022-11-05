@@ -7,9 +7,12 @@ Connect the APDS9960 and oscilloscope as guide.
 
 The X(left) probe is connected to SCL(clock) and GND(black wire). 
 
-Set the probe to x10, and switch and set 10:1 in the oscilloscope。
+Set the probe to x10, and switch and set 10:1 in the oscilloscope.
 
 The Y(right) probe is connected to SDA and GND(black wire).
 
+The result shows on oscilloscope as follows:
 
+![a]()
 
+![a]()
