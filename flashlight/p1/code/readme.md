@@ -1,30 +1,3 @@
-# Pointers in C
-
-Before proceeding to direct register access that we need to understand what are pointers in C:
-`A pointer is a variable whose value is the address of another variable`
-
-```
-#include <stdio.h>
-
-int main () {
-
-   int  var1;
-   int *var2; //Declare a pointer
-   var2 = &var1 //Use '&' to get the address of a variable
-
-   printf("Address of var1 variable: %x\n", &var1); //Address of Variable 'var1'
-   printf("Address of var1 variable: %x\n", *var2); //Value of 'var1'
-
-   return 0;
-}
-```
-From the above code, we saved the address of the variable 'var1' by using '&', in a pointer variable 'var2', by using '*' operator we can printout the value stored at an address
-
-```
-Address of var1 variable: bff5a400
-Address of var2 variable: bff5a3f6
-```
-
 # Direct Register Access
 ```
 typedef          uint32_t   VALUE;
