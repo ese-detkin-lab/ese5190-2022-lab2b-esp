@@ -1,0 +1,37 @@
+py-console-app-notes.txt
+
+Options:
+    1. Start recording
+    2. Replay recorded sequence
+    3. Loop recorded sequence
+    4. Upload recorded sequence to computer
+    5. Download new sequence to device
+    6. Select output format
+    7. Select input format
+
+
+
+
+
+
+
+
+Output Format:
+    1. LED color
+    2. LED brightness
+    3. Serial data
+    4. Register write
+
+
+Input Format: 
+    1. BOOT button
+    2. Serial data
+    3. Read from Register
+
+
+Specify register:
+Address:
+Mask:
+Atomic?
+
+

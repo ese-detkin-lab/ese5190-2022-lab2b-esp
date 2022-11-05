@@ -12,6 +12,6 @@ pico_enable_stdio_usb(02_repl 1)
 pico_enable_stdio_uart(02_repl 0)
 
 elseif(PICO_ON_DEVICE)
-    message(WARNING "not building 01_registers
+    message(WARNING "not building 02_repl
  because TinyUSB submodule is not initialized in the SDK")
 endif()
