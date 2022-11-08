@@ -15,15 +15,22 @@
 
 typedef volatile uint32_t* regaddr;
 
-#define STORAGE_BUFFER_LENGTH 5000
+
+// Already not a fan of this setup but I'll wait to refactor until the next section
+// should have array of struct to store source register (with magic number to represent serial),
+// mask, and value so that when writing, the relevant bit would be known no matter the source (since
+// multiple sources per capture is desired). None of this bitmode/bytemode stuff. Workaround for now 
+// is to condense value to a boolean when outputting to a binary format (all LED modes).
+#define STORAGE_BUFFER_LENGTH 1000
 typedef struct {
     uint32_t data[STORAGE_BUFFER_LENGTH];
     int index;
     uint8_t bitcount;
-    int storage_mode; //BITMODE or BYTEMODE
+    int storage_mode; //BITMODE or BYTEMODE.
+    int recordlen; //set to index upon write, not reset for read/replay.
 } seqstorage;
 
-const seqstorage STORAGE_INIT = {.index = 0, .bitcount = 0, .storage_mode = BYTEMODE};
+const seqstorage STORAGE_INIT = {.index = 0, .bitcount = 0, .storage_mode = BYTEMODE, .recordlen = STORAGE_BUFFER_LENGTH};
 
 typedef struct {
     volatile uint32_t* address;
@@ -88,13 +95,112 @@ uint32_t get_dword_from_serial() {
     return ret;
 }
 
+//consume a 32-bit hexadecimal number from the serial buffer
+bool get_hex(uint32_t* val) {
+    bool end = false;
+    bool continue_reading = true;
+    uint32_t ret = 0;
+    int charnum = 7;
+    while(!end) {
+        bool outputchar = true;
+        int c = getchar_timeout_us(0);
+        if(c == PICO_ERROR_TIMEOUT) {
+            end = false;
+        }
+        else if(c != '\n' && c != '\r' && c != ',' && c != PICO_ERROR_TIMEOUT) {
+            switch (c) {
+            case '0':
+                break;
+            case '1':
+                ret += (0x1 << (charnum * 4));
+                break;
+            case '2':
+                ret += (0x2 << (charnum * 4));
+                break;
+            case '3':
+                ret += (0x3 << (charnum * 4));
+                break;
+            case '4':
+                ret += (0x4 << (charnum * 4));
+                break;
+            case '5':
+                ret += (0x5 << (charnum * 4));
+                break;
+            case '6':
+                ret += (0x6 << (charnum * 4));
+                break;
+            case '7':
+                ret += (0x7 << (charnum * 4));
+                break;
+            case '8':
+                ret += (0x8 << (charnum * 4));
+                break;
+            case '9':
+                ret += (0x9 << (charnum * 4));
+                break;
+            case 'a':
+            case 'A':
+                ret += (0xA << (charnum * 4));
+                break;
+            case 'b':
+            case 'B':
+                ret += (0xB << (charnum * 4));
+                break;
+            case 'c':
+            case 'C':
+                ret += (0xC << (charnum * 4));
+                break;
+            case 'd':
+            case 'D':
+                ret += (0xD << (charnum * 4));
+                break;
+            case 'e':
+            case 'E':
+                ret += (0xE << (charnum * 4));
+                break;  
+            case 'f':
+            case 'F':
+                ret += (0xF << (charnum * 4));
+                break;
+            
+            default:
+                outputchar = false;
+                break;
+            }
+            if(outputchar) {
+                //buf[7-charnum] = c;
+                //putchar(c);
+                charnum--;
+            }
+            
+        }
+        else if (c == '\0') {
+            continue_reading = false;
+            end = true;
+        }
+        else {
+            //buf[7-charnum] = 0;
+            ret = ret >> ((charnum + 1) * 4);
+            end = true;
+        }
+        if(charnum < 0) {
+            //buf[8] = 0;
+            //printf("max len reached\n");
+            end = true;
+        }
+    }
+    //printf("end hex: %08X\n", ret);
+    *val = ret;
+    return continue_reading;
+}
+
 void read_reg_from_ser(inoutreg* reg) {
     reg->address = (regaddr)get_dword_from_serial();
     reg->mask = get_dword_from_serial();
     reg->is_binary = !!(getchar_timeout_us(5000) & 1u);
 }
 
-// store value in buffer, return true if value stored successfully
+// store value in buffer, return true if buffer did not become full (can store more)
 bool write_event_to_storage(seqstorage* store, uint32_t data) {
     if (store->storage_mode == BITMODE) {
         uint32_t mask = (data & 1u) << store->bitcount;
@@ -109,25 +215,18 @@ bool write_event_to_storage(seqstorage* store, uint32_t data) {
     else if (store->storage_mode == BYTEMODE) {
         store->data[store->index] = data;
         store->index++;
+        store->recordlen = store->index;
     }
     return (store->index < STORAGE_BUFFER_LENGTH);
 }
 
+// return next value in buffer, return false if all values have been read
 bool read_event_from_storage(seqstorage* store, uint32_t* data, bool* edgedetected) {
-    if (store->storage_mode == BITMODE) {
-        *data = !!(store->data[store->index] & (1u << store->bitcount));
-        store->bitcount++;
-        if (store->bitcount > 31) {
-            store->bitcount = 0;
-            store->index++;
-        }
-    }
-    else if (store->storage_mode == BYTEMODE) {
-        *data = store->data[store->index];
-        store->index++;
-    }
-    
-    return (store->index < STORAGE_BUFFER_LENGTH);
+    if (store->index >= store->recordlen) {return false;}
+    *data = store->data[store->index];
+    store->index++;
+    if (store->index != 0) {*edgedetected = !!(*data) ^ !!(store->data[store->index]);}
+    return (store->index <= store->recordlen);
 }
 
 uint32_t read_register_value(inoutreg* reg) {
@@ -150,17 +249,40 @@ void write_register_value(inoutreg* reg, uint32_t value) {
 
 }
 
+void import_sequence(seqstorage* store) {
+    bool storage_available = true;
+    store->index = 0;
+    uint32_t val = 0;
+    while (storage_available) {
+        if (!get_hex(&val)) {
+            putchar('\x00');
+            return;
+        }
+        storage_available = write_event_to_storage(store, val);
+    }
+}
+
+void export_sequence(seqstorage* store) {
+    uint32_t data;
+    bool* edge = false;
+    store->index = 0;
+    while(read_event_from_storage(store, &data, edge)) {
+        printf("%08X\n", data);
+    }
+    printf("\x3B\n");
+}
+
 //call this every loop while recording
 // return false if storage full
 bool record_sequence(inoutreg* inputreg, seqstorage* store, uint32_t serial) {
     bool roominbuffer = false;
     uint32_t val;
     if (INPUT_SETTINGS.boot_button) {
-        val = read_register_value(&bootpin);
+        val = (read_register_value(&bootpin));
         roominbuffer = write_event_to_storage(store, val);
     }
     if (INPUT_SETTINGS.serial) {
-        roominbuffer = write_event_to_storage(store, serial);
+        //roominbuffer = write_event_to_storage(store, serial);
     }
     if (INPUT_SETTINGS.register_read) {
         val = read_register_value(inputreg);
@@ -173,7 +295,7 @@ bool record_sequence(inoutreg* inputreg, seqstorage* store, uint32_t serial) {
 //return false when finished
 bool replay_sequence(inoutreg* outputreg, seqstorage* store, ledstate* state) {
     uint32_t data;
-    bool edgedetected;
+    bool edgedetected = false;
     if(read_event_from_storage(store, &data, &edgedetected)){
         if (OUTPUT_SETTINGS.led_brightness) {
             state->is_bright = !!data;
@@ -201,25 +323,6 @@ bool replay_sequence(inoutreg* outputreg, seqstorage* store, ledstate* state) {
     }
 }
 
-void get_line(char* buf) {
-    bool end = false;
-    int charnum = 0;
-    while(!end) {
-        char c = getchar_timeout_us(0);
-        if(c != '\n' && c != '\r') {
-            buf[charnum] = c;
-            putchar(c);
-            charnum++;
-        }
-        else {
-            buf[charnum] = 0;
-            end = true;
-        }
-    }
-}
-
-
-
 void report_error(char* msg) {
     putchar('E');
     printf(msg);
@@ -230,8 +333,6 @@ int main() {
     bool recordactive = false;
     bool playbackactive = false;
     bool loopplayback = false;
-    bool optflag = false;
-    int msgtimer = 0;
     
     stdio_init_all();
     gpio_init(QTPY_BOOT_PIN);
@@ -274,14 +375,14 @@ int main() {
                     INPUT_SETTINGS.boot_button = false;
                     putchar('b');
                     break;
-                case 'T': 
-                    INPUT_SETTINGS.serial = true;
-                    putchar('T');
-                    break;
-                case 't':
-                    INPUT_SETTINGS.serial = false;
-                    putchar('t');
-                    break;
+                //case 'T': 
+                    //INPUT_SETTINGS.serial = true;
+                    //putchar('T');
+                    //break;
+                //case 't':
+                    //INPUT_SETTINGS.serial = false;
+                    //putchar('t');
+                    //break;
                 case 'R': 
                     INPUT_SETTINGS.register_read= true;
                     putchar('R');
@@ -293,7 +394,8 @@ int main() {
                 case 'C':
                     OUTPUT_SETTINGS.led_color = true;
                     OUTPUT_SETTINGS.led_brightness = false;
-                    LED_STATE = (ledstate){true, true, false, false};
+                    LED_STATE = (ledstate){true, false, false, false};
+                    putchar('l');
                     putchar('C');
                     set_led_state(&LED_STATE);
                     break;
@@ -304,23 +406,26 @@ int main() {
                 case 'L':
                     OUTPUT_SETTINGS.led_brightness = true;
                     OUTPUT_SETTINGS.led_color = false;
-                    //LED_STATE = (ledstate){true, true, false, false};
+                    putchar('c');
                     putchar('L');
-                    set_led_state(&(ledstate){true, true, false, false});
+                    LED_STATE = (ledstate){true, true, false, false};
+                    set_led_state(&LED_STATE);
                     break;
                 case 'l':
                     OUTPUT_SETTINGS.led_brightness = false;
                     putchar('l');
                     break;
-                 case 'S': 
-                    OUTPUT_SETTINGS.serial_out = true;
-                    break;
-                case 's':
-                    OUTPUT_SETTINGS.serial_out = false;
-                    break;
+                 //case 'S': 
+                    //OUTPUT_SETTINGS.serial_out = true;
+                    //break;
+                //case 's':
+                    //OUTPUT_SETTINGS.serial_out = false;
+                    //break;
                 case 'W':
-                    OUTPUT_SETTINGS.register_write= true;
-                    putchar('W');
+                    if (!(playbackactive || recordactive)) {
+                        OUTPUT_SETTINGS.register_write= true;
+                        putchar('W');
+                    }
                     break;
                 case 'w':
                     OUTPUT_SETTINGS.register_write = false;
@@ -354,6 +459,16 @@ int main() {
                     loopplayback = false;
                     putchar('o');
                     break;
+                case 'U':
+                    putchar('U');
+                    export_sequence(&store);
+                    putchar('u');
+                    break;
+                case 'D':
+                    putchar('D');
+                    import_sequence(&store);
+                    putchar('d');
+                    break;
                 default:
                     
                     break;
@@ -370,8 +485,9 @@ int main() {
                 store.index = 0;
                 store.bitcount = 0;
             }
+            if (!playbackactive) {putchar('p');}
         }
-        
+        sleep_ms(10);
     }
     return 0;
 }                  
