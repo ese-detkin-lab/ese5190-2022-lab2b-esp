@@ -5,6 +5,8 @@
 // #include "registers.h"
 #include <time.h>
 #include <string.h>
+#define WS2812_PIN 12
+#define WS2812_POWER_PIN 11
 
 #define QTPY_BOOT_PIN 21
 #define SIO
@@ -18,7 +20,9 @@ uint32_t shifted_pin_21_state;
 int t_start;
 int t_end;
 int t_track;
-int inputs;
+int input;
+int answer; //store user input for mode 
+int led_status = 1;
 
 
 typedef struct {
@@ -64,18 +68,17 @@ int check_time(int duration){
 
 int take_yn() {
     int yn_input;
-    sleep_ms(5000);
-    yn_input = getchar_timeout_us(0);
-    printf("you inputted: %u\n", yn_input);
+    yn_input = getchar_timeout_us(50);
+    // printf("you inputted: %u\n", yn_input);
     if (yn_input == '1'){
         return 1;
     }
-    else if (yn_input == '0'){
-        return 0;
+    else if (yn_input == '2'){
+        return 2;
     }
     else {
-        printf("Invalid input, please  enter again!\n");
-        take_yn();
+        return 9;
+
     }
 }
 
@@ -97,21 +100,47 @@ int main() {
     status.last_serial_byte =  0x00000000;
     status.button_is_pressed = 0x00000000;
     status.light_color =       0x00ff0000;
-    int flagg = 0;
-    while (flagg== 0) {
-        //record for 10s
-        // printf("Please input sequence using the boot button");
-
-        int time_return = check_time(10000);
-        if (time_return == 1){
-            printf("reached\n");
-            flagg = 1;
+    // int flagg = 0;
+    while (true) {
+        //record for 8s
+       answer = take_yn();
+        if(answer == 1){
+            int time_return = check_time(8000);
+            if (time_return == 1){
+                printf("reached\n");
+                // flagg = 1;
+            }
         }
-        // printf("Do you want to input again? 1 for yes, 0 for no\n");
-        // flagg = take_yn();
-        // if (flagg == 0){
-        //     break;
-        // }
+        if(answer == 2){
+            sleep_ms(500);
+            getchar_timeout_us(50); //erase the enter
+            while (!stdio_usb_connected()){
+                printf(".");
+                sleep_ms(500);
+             };
+            neopixel_init();
+
+            printf("Ready to start replay on LED...\n");
+            while(true){
+                //printf("in the while loop\n");
+                led_status = getchar_timeout_us(50);
+                if(led_status == '1') { // if button pushed, then light up LED
+                    gpio_put(WS2812_POWER_PIN, true);
+                    gpio_put(WS2812_PIN, true);
+                    neopixel_set_rgb(0x00ff0000);  // if 1, red light
+                    sleep_ms(1000);
+                    } else { 
+                    printf("got something\n");
+                    gpio_put(WS2812_POWER_PIN, true);
+                    gpio_put(WS2812_PIN, true);
+                    neopixel_set_rgb(0x0000ff00);  //if 0, green light
+                    sleep_ms(1000);
+                }
+            }
+        }
+        if(answer == 0){
+            break;
+            }
 
     }
     return 0;
