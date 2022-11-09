@@ -32,13 +32,6 @@ typedef struct {
 
 const seqstorage STORAGE_INIT = {.index = 0, .bitcount = 0, .storage_mode = BYTEMODE, .recordlen = STORAGE_BUFFER_LENGTH};
 
-typedef struct {
-    volatile uint32_t* address;
-    uint32_t value;
-    uint32_t mask;
-    char* msg;
-} UiData;
-
 //only track off/on for each color and dim/bright for all colors, let's not go crazy...
 typedef struct {
     bool red;
@@ -76,23 +69,6 @@ void set_led_state(ledstate* state) {
     uint32_t green = (state->is_bright ? state->green * 0x90 : state->green * 0x20);
     uint32_t blue = (state->is_bright ? state->blue * 0x90 : state->blue * 0x20);
     neopixel_set_rgb((red << 16) | (green << 8) | blue);
-}
-
-uint32_t get_dword_from_serial() {
-    uint32_t ret = 0;
-    int bytesrxd = 0;
-    int inchar;
-    while (bytesrxd < 4) {
-        inchar = getchar_timeout_us(0);        
-        if(inchar == PICO_ERROR_TIMEOUT) {
-            
-        }
-        else if(inchar != '\n' && inchar != '\r' && inchar != PICO_ERROR_TIMEOUT) {
-            ret |= ((uint32_t)inchar << (4 * bytesrxd));
-            bytesrxd++;
-        }
-    }
-    return ret;
 }
 
 //consume a 32-bit hexadecimal number from the serial buffer
@@ -180,8 +156,10 @@ bool get_hex(uint32_t* val) {
         }
         else {
             //buf[7-charnum] = 0;
-            ret = ret >> ((charnum + 1) * 4);
-            end = true;
+            if (charnum < 7) { //handle extra line endings from previous
+                ret = ret >> ((charnum + 1) * 4);
+                end = true;
+            }
         }
         if(charnum < 0) {
             //buf[8] = 0;
@@ -192,12 +170,6 @@ bool get_hex(uint32_t* val) {
     //printf("end hex: %08X\n", ret);
     *val = ret;
     return continue_reading;
-}
-
-void read_reg_from_ser(inoutreg* reg) {
-    reg->address = (regaddr)get_dword_from_serial();
-    reg->mask = get_dword_from_serial();
-    reg->is_binary = !!(getchar_timeout_us(5000) & 1u);
 }
 
 // store value in buffer, return true if buffer did not become full (can store more)
@@ -255,7 +227,7 @@ void import_sequence(seqstorage* store) {
     uint32_t val = 0;
     while (storage_available) {
         if (!get_hex(&val)) {
-            putchar('\x00');
+            putchar('\x3B');
             return;
         }
         storage_available = write_event_to_storage(store, val);
@@ -269,7 +241,7 @@ void export_sequence(seqstorage* store) {
     while(read_event_from_storage(store, &data, edge)) {
         printf("%08X\n", data);
     }
-    printf("\x3B\n");
+    printf("\x3B\n"); //write semicolon to signal EOF
 }
 
 //call this every loop while recording

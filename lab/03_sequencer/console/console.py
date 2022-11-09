@@ -10,8 +10,10 @@ Command = namedtuple('Command', ['cmd_code', 'data'])
 Seqstate = namedtuple('Seqstate', ['led_color_out', 'led_brightness_out', 'serial_out', 'register_write_out', 'boot_btn_in', 'serial_in', 'register_read_in'])
 
 
-def send_sequence(filename, sequence):
-    pass
+def send_sequence(filename):
+    infile = open(filename, 'rb')
+    rp2040.writelines(infile.readlines())
+        
 
 def upload_sequence(filename):
     outfile = open(filename, 'w')
@@ -84,9 +86,15 @@ if __name__ == '__main__':
             elif usr_input == 'U':
                 rp2040.write(b'U')
                 rp2040.read_until(b'U')
-                upload_sequence('saved_sequence.txt')
+                upload_sequence('saved_sequence_read_back.txt')
                 rp2040.read_until(b'u')
                 print('Sequence saved')
+            elif usr_input == 'D':
+                rp2040.write(b'D')
+                rp2040.read_until(b'D')
+                send_sequence('saved_sequence.txt')
+                rp2040.read_until(b'd')
+                print('Sequence downloaded to device')
             else:
                 print('Invalid input')
                 
