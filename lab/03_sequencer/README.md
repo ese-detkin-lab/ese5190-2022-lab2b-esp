@@ -15,6 +15,6 @@ Create a 'sequencer' that allows you to record BOOT button presses and play them
 
 ### My Notes
 
-Partially implemented - Have implemented the protocol that the Python companion app uses. Sequencer can save data to file.
+Sequencer can save data to file and accept new data from terminal program. Values are entered as hexadecimal values.
 
 
