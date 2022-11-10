@@ -8,6 +8,6 @@ Update your sequencer to be able to slow down and speed up recordings/replay. On
 
 ### My Notes
 
-This will be a minor change to the previous section's program. I imagine the console application will also only need minor modifications to output and consume differently-formatted files.
+This was a minor change to the previous section's program. The underlying type of the storage array was changed to a structure that also contained timestamp data, and the record/playback functions were tweaked to use the new structure.
 
 

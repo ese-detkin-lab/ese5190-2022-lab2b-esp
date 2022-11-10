@@ -1,7 +1,7 @@
 add_subdirectory(01_registers)
 add_subdirectory(02_repl)
 add_subdirectory(03_sequencer)
-#add_subdirectory(04_slow_motion)
+add_subdirectory(04_slow_motion)
 #add_subdirectory(05_i2c_traffic)
 #add_subdirectory(06_pioscope)
 #add_subdirectory(07_pio_sequencer)
