@@ -84,11 +84,11 @@ int main() {
 ## Result
 The following screenshot shows I write value 1 into register 0xd0000060. After that, read the value in register 0xd0000060. The read value is 1 which means I wrote the value successfully.
 
-<img width="494" alt="2 2" src="https://user-images.githubusercontent.com/114196821/201803270-1206cdce-16a4-4eee-a003-0c4780b456a4.PNG">
+<img width="650" alt="2 2" src="https://user-images.githubusercontent.com/114196821/201803270-1206cdce-16a4-4eee-a003-0c4780b456a4.PNG">
 
 The following screenshot shows I can read the value in 0x400140a8 which shows the status of GPIO21 (the Button in QT Py RP2040). When I press the button, the read value is 0. When I release the button, the read value is 70e0000
 
-<img width="494" alt="2 1" src="https://user-images.githubusercontent.com/114196821/201803233-580860de-bfaf-471b-a8da-cb273a030546.PNG">
+<img width="650" alt="2 1" src="https://user-images.githubusercontent.com/114196821/201803233-580860de-bfaf-471b-a8da-cb273a030546.PNG">
 
 
 
