@@ -151,6 +151,7 @@ while(1){
 }
 ```
 ## Results
+22 is SDA and 23 is SCL
 ![851442468126576238](https://user-images.githubusercontent.com/114196821/202039117-3808deb8-6d1d-48ea-82e4-a0f7735f82b6.png)
 
 
