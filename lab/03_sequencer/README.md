@@ -15,4 +15,4 @@ Create a 'sequencer' that allows you to record BOOT button presses and play them
 
 It can record and replay the sequence of the led shining.
 
-![a](https://github.com/akiyamask/ese5190-2022-lab2b-esp/blob/main/lab/03_sequencer/lab3.gif).
+![a]().
