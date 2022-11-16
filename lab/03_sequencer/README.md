@@ -13,4 +13,4 @@ Create a 'sequencer' that allows you to record BOOT button presses and play them
     - outputs: neopixel color, neopixel brightness, data over serial, register read/write commands
 
 
-![a](https://github.com/HaoliangYou/ese5190-2022-lab2b-esp/blob/main/lab/03_sequencer/3.gif)
+![a](https://github.com/HaoliangYou/ese5190-2022-lab2b-esp/blob/main/lab/03_sequencer/3%20.gif)
