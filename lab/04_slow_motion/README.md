@@ -12,10 +12,15 @@ Update your sequencer to be able to slow down and speed up recordings/replay. On
 On the basis of part 03, we can just add the slow_motion function as follows:
 
 def slow_motion(data_arrays):
+
 two_times_data = []
+
 for data in data_arrays:
+
 two_times_data.append(data)
+
 two_times_data.append(data)
+
 return two_times_data
 
 This function will theoretically double your input time.
