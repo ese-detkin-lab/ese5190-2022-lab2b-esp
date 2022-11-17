@@ -1,0 +1,57 @@
+1. Which parts of the lab specification have you found most confusing or difficult to understand? Be specific, and quote any parts of the lab description 
+  relevant to your answer (e.g., "modify the PIO/DMA logic analyzer example to record a timestamped trace of an RP2040-ADPS9960 exchange while the BOOT 
+  button is pressed.") I will make particular notice of anything that seems underspecified (e.g., words whose meaning is not clear from context, or 
+  conflicting interpretations of a deliverable).
+  
+  I would like to give a very specific example of the confusion I had when I read the lab, taking part 6: pioscope as an example:
+  
+  The lab says the following:
+  
+  "TODO:
+modify the PIO/DMA logic analyzer example to record a timestamped trace of an RP2040-ADPS9960 exchange while the BOOT button is pressed
+with a partner, connect a second Qt Py to the Stemma Qt bus of an ADPS9960 that's attached to a first Qt Py running the Lab 1 Python code
+record a trace of this exchange"
+  
+  The confusion I had:
+  
+  1. The sdk manual/rp2040 datasheet has some explanation and clarification for this PIO/DMA logic analyzer example. However, taking DMA as example, the 
+  explanation was simply: 
+  
+  "RP2040 is equipped with a powerful direct memory access unit (DMA), which can transfer data for you in the
+background. Suitably programmed, the DMA can make quite long sequences of transfers without supervision. Up to one
+word per system clock can be transferred to or from a PIO state machine, which is, to be quite technically precise, more
+bandwidth than you can shake a stick at. The bandwidth is shared across all state machines, but you can use the full
+amount on one state machine."
+
+  This is a very general, broad and vague explanation of DMA. It does point out what DMA is, but with no detailed instruction on how it should be 
+  configured, setup, run etc. 
+  
+  A conclusion for this point: the SDK manual is simply not informative enough and not detailed enough. 
+  
+  2. The lack of an overview of RP2040:
+  
+  We did do many paper work during previous labs regarding how PIO work, how ISR, OSR and FIFO/SM work together. But all that was done with a very 
+  confusing setup lab and was due within a week. I could relunctantly finish the write-up and the lab in time with what I know. Or, with what I think
+  I know. Till now, I do not have any feedback on the assignments, but thats not the point. The point is, I do not even know if my understanding is 
+  correct. 
+  
+  For example, I later found this diagram very helpful: 
+  
+  
+  
+  
+  
+  
+  
+2. Which lab topics have you found most confusing or difficult to understand? E.g., "serial communication with Python," "aliased bitwise operations," 
+    "programming the PIO," etc. Be specific, and describe any lingering areas of confusion and/or anything that has helped you navigate them.
+    
+    
+    
+    
+3. Which parts of the lab have you found most difficult to implement? Again, be specific, citing any parts of the lab materials & your own code that are 
+  relevant to your answer.
+  
+  
+4. What steps have you taken to resolve these difficulties? Any other barriers you have faced to completing this assignment? Mention any students, repos, 
+  or other resources you have found helpful in completing the lab so far.
