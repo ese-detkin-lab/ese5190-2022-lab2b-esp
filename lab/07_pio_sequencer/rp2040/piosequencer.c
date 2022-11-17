@@ -4,6 +4,8 @@
 #include "neopixel.h"
 #include "hardware/gpio.h"
 
+#include "serial_interface.h"
+
 #define QTPY_BOOT_PIN 21
 #define QTPY_BOOT_PIN_BITMASK 0x200000
 #define QTPY_GPIO_A0_BITMASK 0x20000000
@@ -31,7 +33,10 @@ typedef struct {
 
 #define STORAGE_BUFFER_LENGTH 1000
 typedef struct {
-    datapoint data[STORAGE_BUFFER_LENGTH];
+    //datapoint data[STORAGE_BUFFER_LENGTH];
+    uint32_t data[STORAGE_BUFFER_LENGTH];
+    uint32_t timestamps[STORAGE_BUFFER_LENGTH];
+    uint32_t masks[STORAGE_BUFFER_LENGTH];
     int index;
     int recordlen; //set to index upon write, not reset for read/replay.
     absolute_time_t starttime;
@@ -72,139 +77,16 @@ void set_led_state(ledstate* state) {
     neopixel_set_rgb((red << 16) | (green << 8) | blue);
 }
 
-uint32_t get_dword_from_serial() {
-    uint32_t ret = 0;
-    int bytesrxd = 0;
-    int inchar;
-    while (bytesrxd < 4) {
-        inchar = getchar_timeout_us(0);
-        if(inchar == PICO_ERROR_TIMEOUT) {
-            
-        }
-        else if(inchar != '\n' && inchar != '\r' && inchar != PICO_ERROR_TIMEOUT) {
-            ret |= ((uint32_t)inchar << (4 * bytesrxd));
-            bytesrxd++;
-        }
-    }
-    return ret;
-}
-
-//consume a 32-bit hexadecimal number from the serial buffer
-//this is slooooow
-bool get_hex(uint32_t* val) {
-    bool end = false;
-    bool continue_reading = true;
-    uint32_t ret = 0;
-    int charnum = 7;
-    while(!end) {
-        bool outputchar = true;
-        int c = getchar_timeout_us(0);
-        if(c == PICO_ERROR_TIMEOUT) {
-            end = false;
-        }
-        else if (c == ';') {
-            putchar('$');
-            continue_reading = false;
-            end = true;
-        }
-        else if(c != '\n' && c != '\r' && c != ',' && c != PICO_ERROR_TIMEOUT) {
-            switch (c) {
-            case '0':
-                break;
-            case '1':
-                ret += (0x1 << (charnum * 4));
-                break;
-            case '2':
-                ret += (0x2 << (charnum * 4));
-                break;
-            case '3':
-                ret += (0x3 << (charnum * 4));
-                break;
-            case '4':
-                ret += (0x4 << (charnum * 4));
-                break;
-            case '5':
-                ret += (0x5 << (charnum * 4));
-                break;
-            case '6':
-                ret += (0x6 << (charnum * 4));
-                break;
-            case '7':
-                ret += (0x7 << (charnum * 4));
-                break;
-            case '8':
-                ret += (0x8 << (charnum * 4));
-                break;
-            case '9':
-                ret += (0x9 << (charnum * 4));
-                break;
-            case 'a':
-            case 'A':
-                ret += (0xA << (charnum * 4));
-                break;
-            case 'b':
-            case 'B':
-                ret += (0xB << (charnum * 4));
-                break;
-            case 'c':
-            case 'C':
-                ret += (0xC << (charnum * 4));
-                break;
-            case 'd':
-            case 'D':
-                ret += (0xD << (charnum * 4));
-                break;
-            case 'e':
-            case 'E':
-                ret += (0xE << (charnum * 4));
-                break;  
-            case 'f':
-            case 'F':
-                ret += (0xF << (charnum * 4));
-                break;
-            
-            default:
-                outputchar = false;
-                break;
-            }
-            if(outputchar) {
-                //buf[7-charnum] = c;
-                //putchar(c);
-                charnum--;
-            }
-            
-        }
-        else {
-            
-            if (charnum < 7) { //handle extra line endings or commas from previous
-                ret = ret >> ((charnum + 1) * 4);
-                end = true;
-            }
-        }
-        if(charnum < 0) {
-            end = true;
-        }
-    }
-    //printf("end hex: %08X\n", ret);
-    *val = ret;
-    return continue_reading;
-}
-
-void read_reg_from_ser(inoutreg* reg) {
-    reg->address = (regaddr)get_dword_from_serial();
-    reg->mask = get_dword_from_serial();
-    reg->is_binary = !!(getchar_timeout_us(5000) & 1u);
-}
-
 
 
 // store value in buffer, return true if buffer did not become full (can store more)
 bool write_event_to_storage(seqstorage* store, uint32_t data, inoutreg* reg) {
     //if the data in this event is the same as the data in the last recorded point, do not store it
-    if ((store->index != 0) && (store->data[store->index - 1].value == data)) {return (store->index < STORAGE_BUFFER_LENGTH);}
+    if ((store->index != 0) && (store->data[store->index - 1] == data)) {return (store->index < STORAGE_BUFFER_LENGTH);}
     
     datapoint point = {.delta = absolute_time_diff_us(store->starttime, get_absolute_time()), .value = data, .reg = *reg};
-    store->data[store->index] = point;
+    store->data[store->index] = data;
+    store->timestamps[store->index] = absolute_time_diff_us(store->starttime, get_absolute_time());
     store->recordlen = store->index;
     store->index++;
     
@@ -217,9 +99,9 @@ bool read_event_from_storage(seqstorage* store, uint32_t* data, inoutreg* reg, b
     if (store->index >= store->recordlen) {return false;}
     *newdata = false;
     //if the time between now and the start of playback is less than the stored delta, do not output
-    if (absolute_time_diff_us(store->starttime, get_absolute_time()) < (store->data[store->index].delta / scale)) {return (store->index <= store->recordlen);}
-    *reg = store->data[store->index].reg;
-    *data = store->data[store->index].value;
+    if (absolute_time_diff_us(store->starttime, get_absolute_time()) < (store->timestamps[store->index] / scale)) {return (store->index <= store->recordlen);}
+    //*reg = store->data[store->index].reg;
+    *data = store->data[store->index];
     store->index++;
     *newdata = true;
     return (store->index <= store->recordlen);
@@ -245,6 +127,12 @@ void write_register_value(inoutreg* reg, uint32_t value) {
 
 }
 
+void read_reg_from_ser(inoutreg* reg) {
+    reg->address = (regaddr)get_dword_from_serial();
+    reg->mask = get_dword_from_serial();
+    reg->is_binary = !!(getchar_timeout_us(5000) & 1u);
+}
+
 void import_sequence(seqstorage* store) {
     bool storage_available = true;
     store->index = 0;
@@ -266,7 +154,7 @@ void import_sequence(seqstorage* store) {
         if (!get_hex(&val)) {putchar('\x3B'); return;}
 
         storage_available = write_event_to_storage(store, val, &reg);
-        store->data[store->index - 1].delta = delta; //go back in time and overwrite the delta
+        store->timestamps[store->index - 1] = delta; //go back in time and overwrite the delta
         sleep_ms(500);
     }
 }
@@ -274,7 +162,7 @@ void import_sequence(seqstorage* store) {
 void export_sequence(seqstorage* store) {
     store->index = 0;
     while(store->index <= store->recordlen) {
-        printf("%08X,%08X,%08X,%08X\n", store->data[store->index].delta,store->data[store->index].reg.address,store->data[store->index].reg.mask,store->data[store->index].value);
+        printf("%08X,%08X,%08X,%08X\n", store->timestamps[store->index],store->masks[store->index],store->data[store->index]);
         store->index++;
     }
     printf("\x3B\n"); //write semicolon to signal EOF

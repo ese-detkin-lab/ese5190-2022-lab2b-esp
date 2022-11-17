@@ -1,0 +1,48 @@
+
+.define public sync_irq 1
+.define public tx_trigger_irq 0
+.define public rx_trigger_irq 2
+
+
+.program sequencer_tx_time
+
+    set y, 0
+    wait 1 irq sync_irq     ; wait for the RX SM to signal start of program
+.wrap_target
+tick:
+    out x, 32               ; move 32 bits from OSR to X scratch register
+    nop                     ; y = y+1 need to increment y, but HOW
+    jmp x!=y tick           ; loop back to keep incrementing y
+    irq wait tx_trigger_irq ; set IRQ 0 and wait for sequencer_tx_pins to reset it
+.wrap
+
+.program sequencer_tx_pins
+
+.wrap_target
+    wait 1 irq tx_trigger_irq   ; wait until sequencer_tx_time signals to output values to pins
+    out pins, 32                ; write 32 bits from OSR to the pins
+.wrap
+
+.program sequencer_rx_time
+    set x, 0
+.wrap_target
+    nop                         ; x = x+1 ????????????????
+    wait 1 irq rx_trigger_irq   ; wait for sequencer_rx_pins to signal (but don't actually wait? need to keep incrementing)
+                                ;   would need something like a "jump if IRQ set" to make this possible.
+    in x, 32                    ; read in value stored in x to ISR
+.wrap
+
+.program sequencer_rx_pins
+    irq wait sync_irq           ; send signal to TX SM to start program
+    jmp entry_point
+record:
+    irq wait rx_trigger_irq     ; send a signal to system interrupt
+    in x, 32                    ; transfer contents of x scratch register to ISR
+.wrap_target 
+entry_point:
+    mov x, y                    ; move x to y
+    mov pins, x                 ; fill x with pin data
+    jmp x != y record           ; if x != y (pins changed state), jump to instruction that saves x to ISR
+.wrap
+
+
