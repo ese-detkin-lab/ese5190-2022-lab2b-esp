@@ -5,4 +5,4 @@ Update your sequencer to be able to slow down and speed up recordings/replay. On
 - update your sequencer to be able to record just the timestamped transitions between input values, and to be able to play data in this format
 - give your sequencer the ability to select a range of output rates for both live and recorded input
 
-
+# see 03_sequencer 
