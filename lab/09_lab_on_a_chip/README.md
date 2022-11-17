@@ -13,10 +13,10 @@ Report the observed 'jitter' based on misalignment with the free-running PWM mod
 ### COLOR packet delivered to PIO module
 
 as shown in 06_pioscope
+![image-20221115221201323](https://user-images.githubusercontent.com/44985032/202371961-1f86036e-45c9-4df9-b65c-24c04e372a94.png)
 
-![image-20221115221201323](../06_pioscope/README.assets/image-20221115221201323.png)
+![image-20221115222636599](https://user-images.githubusercontent.com/44985032/202371974-280e902a-32bb-4a0e-a9db-ab34f73063cb.png)
 
-![pio](README.assets/pio.png)
 
 back to our code
 
@@ -30,20 +30,15 @@ A data package can be divided into four part
 
 AB for proximity data, CD for ALS data.
 
-![image-20221115222636599](README.assets/image-20221115222636599.png)
+![image-20221115232936416](https://user-images.githubusercontent.com/44985032/202371990-ca4c5fa1-9568-43a9-a467-5291dc22f3e3.png)
 
 Here we can see, part A, C are write from master to slave, which announce that which register of slave will be read. And B, D will be the address and data. At dotted line is the repeated START bit, and at solid line is the stop bit.
 
 ### Packet send to WS2812
 
-![image-20221115232936416](README.assets/image-20221115232936416.png)
-
-![image-20221115233046181](README.assets/image-20221115233046181.png)
+![image-20221115233046181](https://user-images.githubusercontent.com/44985032/202372000-b0756682-d7af-4ee2-a613-6aff1dcb70a8.png)
 
 ### DEMO
 
-![image-20221115235207085](README.assets/image-20221115235207085.png)
-
-![image-20221115235250507](README.assets/image-20221115235250507.png)
-
-![image-20221115235259011](README.assets/image-20221115235259011.png)
+![part9](https://user-images.githubusercontent.com/44985032/202372018-9cd58d6b-cc5e-41ea-b379-d11009b7ab50.jpg)
+![part10](https://user-images.githubusercontent.com/44985032/202372020-afb78dc2-a854-4562-a4b0-b02ee17c25d0.jpg)
