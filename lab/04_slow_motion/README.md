@@ -7,4 +7,14 @@ Update your sequencer to be able to slow down and speed up recordings/replay. On
 
 
 Let the led shining recorded and replayed in a slower or quicker speed. 
-![a]()
+![a](https://github.com/akiyamask/ese5190-2022-lab2b-esp/blob/main/lab/04_slow_motion/lab4%20slow%20motion.gif)
+
+The code is the same as part3 just need to add the slow_mo funtion
+def slow_mo(data_arrays):
+    two_times_data = []
+    for data in data_arrays:
+        two_times_data.append(data)
+        two_times_data.append(data)
+    return two_times_data
+
+
