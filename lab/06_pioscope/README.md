@@ -6,6 +6,12 @@
 
 ### My Notes
 
-This section should be pretty straightforward (not looking forward to being wrong about all these "should be easy!"s.).
+Modified the logic analyzer to capture a greater number of samples and to output the results in a CSV format.
+
+Captured data is available in [capture_1.csv](capture_1.csv)
+
+![](capture_1.png)
+
+
 
 

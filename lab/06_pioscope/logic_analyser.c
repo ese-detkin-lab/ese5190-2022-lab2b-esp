@@ -26,7 +26,7 @@
 // Some logic to analyse:
 const uint CAPTURE_PIN_BASE = 22;
 const uint CAPTURE_PIN_COUNT = 2;
-const uint CAPTURE_N_SAMPLES = 96;
+const uint CAPTURE_N_SAMPLES = 65535;
 const uint BOOT_PIN = 21;
 
 static inline uint bits_packed_per_word(uint pin_count) {
