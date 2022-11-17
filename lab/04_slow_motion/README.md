@@ -23,5 +23,5 @@ two_times_data.append(data)
 
 return two_times_data
 
-This function will theoretically double your input time.
+This function will theoretically slow down your input time.
 If you want to speed up, you can use the same method to remove some bits.
