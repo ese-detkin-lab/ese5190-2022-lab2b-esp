@@ -1,43 +1,38 @@
 
-.define public sync_irq 1
-.define public tx_trigger_irq 0
-.define public rx_trigger_irq 2
+.define public sync_irq 4
+.define public rx_trigger_irq 0
 
 
-.program sequencer_tx_time
+.program sequencer_tx
 
-    set y, 0
-    wait 1 irq sync_irq     ; wait for the RX SM to signal start of program
+    wait 1 irq sync_irq
 .wrap_target
-tick:
-    out x, 32               ; move 32 bits from OSR to X scratch register
-    nop                     ; y = y+1 need to increment y, but HOW
-    jmp x!=y tick           ; loop back to keep incrementing y
-    irq wait tx_trigger_irq ; set IRQ 0 and wait for sequencer_tx_pins to reset it
-.wrap
-
-.program sequencer_tx_pins
-
-.wrap_target
-    wait 1 irq tx_trigger_irq   ; wait until sequencer_tx_time signals to output values to pins
     out pins, 32                ; write 32 bits from OSR to the pins
 .wrap
 
-.program sequencer_rx_time
-    set x, 0
-.wrap_target
-    nop                         ; x = x+1 ????????????????
-    wait 1 irq rx_trigger_irq   ; wait for sequencer_rx_pins to signal (but don't actually wait? need to keep incrementing)
-                                ;   would need something like a "jump if IRQ set" to make this possible.
-    in x, 32                    ; read in value stored in x to ISR
-.wrap
+% c-sdk {
 
-.program sequencer_rx_pins
+#include "hardware/gpio.h"
+
+static inline void sequencer_tx_init(PIO pio, uint sm, uint offset) {
+    pio_sm_config c = sequencer_tx_program_get_default_config(offset);
+
+    sm_config_set_out_pins(&c, 0, 32);
+    sm_config_set_in_pins(&c, 0);
+    sm_config_set_out_shift(&c, false, true, 32);
+    sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_RX);
+    pio_sm_init(pio, sm, offset, &c);
+    pio_sm_set_enabled(pio, sm, true);
+}
+
+%}
+
+.program sequencer_rx
     irq wait sync_irq           ; send signal to TX SM to start program
     jmp entry_point
 record:
-    irq wait rx_trigger_irq     ; send a signal to system interrupt
     in x, 32                    ; transfer contents of x scratch register to ISR
+    irq rx_trigger_irq          ; send a signal to system interrupt
 .wrap_target 
 entry_point:
     mov x, y                    ; move x to y
@@ -46,3 +41,23 @@ entry_point:
 .wrap
 
 
+% c-sdk {
+
+#include "hardware/gpio.h"
+
+// Configure the sequencer recorder. Does not call pio_sm_set_enabled() to enable the State Machine
+static inline void sequencer_rx_init(PIO pio, uint sm, uint offset) {
+    pio_sm_config c = sequencer_rx_program_get_default_config(offset);
+
+    sm_config_set_out_pins(&c, 0, 32);
+    sm_config_set_in_pins(&c, 0);
+    sm_config_set_out_shift(&c, false, true, 32);
+    sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_RX);
+
+    pio_set_irq0_source_enabled(pio, pis_interrupt0, true);
+    pio_interrupt_clear(pio, sm);
+
+    pio_sm_init(pio, sm, offset, &c);
+}
+
+%}

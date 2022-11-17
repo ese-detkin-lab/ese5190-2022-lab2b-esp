@@ -5,6 +5,7 @@
 #include "hardware/gpio.h"
 
 #include "serial_interface.h"
+#include "sequencer.pio.h"
 
 #define QTPY_BOOT_PIN 21
 #define QTPY_BOOT_PIN_BITMASK 0x200000
@@ -222,6 +223,18 @@ bool replay_sequence(inoutreg* outputreg, seqstorage* store, ledstate* state) {
     }
 }
 
+void pio_tx_rx_init() {
+    PIO pio = pio0;
+    uint sm = 0;
+
+    uint offset = pio_add_program(pio, &sequencer_tx_program);
+    sequencer_tx_init(pio, sm, offset);
+
+    offset = pio_add_program(pio, &sequencer_rx_program);
+    sequencer_rx_init(pio, sm, offset);
+    
+}
+
 void report_error(char* msg) {
     putchar('E');
     printf(msg);
@@ -406,4 +419,7 @@ int main() {
         sleep_ms(10);
     }
     return 0;
+    
 }                  
+
+

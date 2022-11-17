@@ -6,8 +6,8 @@ target_sources(07_pio_sequencer PRIVATE rp2040/piosequencer.c)
 
 pico_generate_pio_header(07_pio_sequencer ${CMAKE_CURRENT_LIST_DIR}/rp2040/sequencer.pio OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR}/rp2040/generated) # PICO SDK (PIO)
 
-target_include_directories(07_pio_sequencer PRIVATE ${CMAKE_CURRENT_LIST_DIR}/rp2040/include PUBLIC ${CODE_DIR}/flashlight)
-target_link_libraries(07_pio_sequencer PRIVATE pico_stdlib lab2_neopixel)
+target_include_directories(07_pio_sequencer PRIVATE ${CMAKE_CURRENT_LIST_DIR}/rp2040/include ${CMAKE_CURRENT_LIST_DIR}/rp2040/generated PUBLIC ${CODE_DIR}/flashlight)
+target_link_libraries(07_pio_sequencer PRIVATE pico_stdlib hardware_pio lab2_neopixel)
 pico_add_extra_outputs(07_pio_sequencer)
 
 pico_enable_stdio_usb(07_pio_sequencer 1)
