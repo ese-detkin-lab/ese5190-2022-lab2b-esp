@@ -9,3 +9,10 @@ You can now actually measure the timings you modeled in the last lab. Add APDS99
 Run this experiment in both dark and light room settings (record initial ambient brightness in each case). The Neopixel should start 'off' and the ADPS9960 should be initialized with your preferred sampling rate (you may want to try a few different rates). Run the experiment for at least 100 samples at brightness settings of 0%, 25%, 50%, 75%, 100% (making sure to give the ADPS reading enough time to 'settle' each time Neopixel is turned off).
 
 Report the observed 'jitter' based on misalignment with the free-running PWM module on the WS2012.
+
+
+![a](https://github.com/HaoliangYou/ese5190-2022-lab2b-esp/blob/main/lab/09_lab_on_a_chip/9%20blue.gif)
+
+![a](https://github.com/HaoliangYou/ese5190-2022-lab2b-esp/blob/main/lab/09_lab_on_a_chip/9%20green.gif)
+
+![a](https://github.com/HaoliangYou/ese5190-2022-lab2b-esp/blob/main/lab/09_lab_on_a_chip/9%20red.gif)

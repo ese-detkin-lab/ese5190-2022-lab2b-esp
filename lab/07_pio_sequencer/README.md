@@ -4,3 +4,6 @@
 
 
 
+Let logic_analyzer.h file to sequencer.clogic_analyzer.h file
+
+Use gpio_get() with sample() the gpio_get().

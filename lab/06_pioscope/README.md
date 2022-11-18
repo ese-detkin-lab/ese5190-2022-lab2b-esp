@@ -5,3 +5,4 @@
 - record a trace of this exchange
 
 
+![a](https://github.com/HaoliangYou/ese5190-2022-lab2b-esp/blob/main/lab/06_pioscope/6.png)
