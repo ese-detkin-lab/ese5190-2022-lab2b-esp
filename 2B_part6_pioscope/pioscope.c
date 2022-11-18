@@ -45,12 +45,6 @@ static inline uint bits_packed_per_word(uint pin_count) {
     return SHIFT_REG_WIDTH - (SHIFT_REG_WIDTH % pin_count);
 }
 
-void print_array(int arr[]) {
-    for (int i = 0; i < 10; i ++ ){
-        printf("%d", arr[i]);
-    }
-}
-
 void logic_analyser_init(PIO pio, uint sm, uint pin_base, uint pin_count, float div) {
     // Load a program to capture n pins. This is just a single `in pins, n`
     // instruction with a wrap.
@@ -100,14 +94,6 @@ void logic_analyser_arm(PIO pio, uint sm, uint dma_chan, uint32_t *capture_buf, 
 
     //pio_sm_exec(pio, sm, pio_encode_wait_gpio(trigger_level, trigger_pin));
     pio_sm_set_enabled(pio, sm, true);
-}
-
-void now_print(int indi) {
-    if (indi == 1){
-        printf("-");
-    } else {
-        printf("_");
-    }
 }
 
 
