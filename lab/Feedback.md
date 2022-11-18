@@ -1,8 +1,8 @@
 # Lab Feedback Questions
 ### Which parts of the lab specification have you found most confusing or difficult to understand? Be specific, and quote any parts of the lab description relevant to your answer (e.g., "modify the PIO/DMA logic analyzer example to record a timestamped trace of an RP2040-ADPS9960 exchange while the BOOT button is pressed.") I will make particular notice of anything that seems underspecified (e.g., words whose meaning is not clear from context, or conflicting interpretations of a deliverable).
 
-The terms in the lab description is vague to me. I would hope to see more detailed definition. 
-####  modify the PIO/DMA logic analyzer example to record a timestamped trace of an RP2040-ADPS9960 exchange
+Some of the terms in the lab description is vague to me. I would hope to see more detailed definition. 
+####  "modify the PIO/DMA logic analyzer example to record a timestamped trace of an RP2040-ADPS9960 exchange"
 Firstly, what's the definition for "timestamped"? How should it be represented in the outcome of the lab? 
 It can be in many forms ![IMG_C084660CB55E-1](https://user-images.githubusercontent.com/84453030/202598439-eaa7dae1-8696-42e8-a85a-cab10f8205a9.jpeg)
 And more importantly, what's the unit of each timestamp? Should it be in the machines absolute time(ns), the PIO cycle(1,2,3,4...), or other cycles? I think timing is very immportant in embedded design, it would be helpful if different unit and measurement of time could be discussed more.
@@ -17,7 +17,7 @@ I spent lots of time "guessing" in which step I should adjust the sampling rate 
 
 I would say PIO. I could understand that PIO can be used to program customized IO pin, but I felt confused what's the advantage of pio to write to registers, how to get pio module work in the c main program, how to program the .pio, what role does DMA plays in it, does DMA comes in the .pio or .c...
 For example, 
-#### modify your sequencer to use the PIO as its primary I/O engine, including the ability to R/W any register
+#### "modify your sequencer to use the PIO as its primary I/O engine, including the ability to R/W any register"
 I was stucked in where to start to use PIO in my original sequencer, and I didn't know whether my orininal sequencer is working in the right track. I think it would be helpful if the lab can be cut into two pieces. For example, in last week when most of the students finished part 6, it would be a good time to go over the sequencer part together on class. Share what's a better way to do it, what's the problem of the directly r/w to register, why does timing matters. That would be a good start point to show why we need the PIO and how PIO works better. 
 
 Some instructions like "1. Go to xxxx.pio and try to understand line 20 to line 45 2. Create a sequencer.pio to include the pio r/w function 3. Go to your sequencer to change the direct r/w function to pio_r/w"  would help.
