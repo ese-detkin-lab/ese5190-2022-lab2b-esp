@@ -1,5 +1,5 @@
 /**
-Part 6
+Part 6 
 */
 
 #include <stdio.h>
@@ -128,11 +128,7 @@ void print_capture_buf(const uint32_t *buf, uint pin_base, uint pin_count, uint3
             // Data is left-justified in each FIFO entry, hence the (32 - record_size_bits) offset
             uint word_mask = 1u << (bit_index % record_size_bits + 32 - record_size_bits);
             current_capture = (buf[word_index]  & word_mask) >> (bit_index % record_size_bits + 32 - record_size_bits);
-            // printf("previous: %d\n", previous_buf);
-            // printf("current: %d\n", current_capture);
-            // printf("\n\n");
-            //sleep_ms(500);
-            
+
             if (current_capture != previous_buf) {
                 //results[count] = 1; //indicate change
                 printf("%d", unchange_time);
@@ -144,57 +140,9 @@ void print_capture_buf(const uint32_t *buf, uint pin_base, uint pin_count, uint3
                 unchange_time = unchange_time + 1;
                 printf("*");
             }
-            // else {
-            //     //results[count] = 0; // indicate no change
-            //     //strncat(results, ptr_zero, 1);
-            //     nop;
-            // }
 
         }
         printf("\n");
-    }
-}
-
-void blink_capture_buf(const uint32_t *buf, uint pin_base, uint pin_count, uint32_t n_samples) {
-    // Display the capture buffer in LED blink form, 1 for light, 0 for dim
-    int led_status = 0;
-    printf("Start Blink the captured signal:\n");
-    // Each FIFO record may be only partially filled with bits, depending on
-    // whether pin_count is a factor of 32.
-    uint record_size_bits = bits_packed_per_word(pin_count);
-    stdio_init_all();
-
-    gpio_init(WS2812_POWER_PIN);
-    gpio_set_dir(WS2812_POWER_PIN,true);
-
-    gpio_init(QTPY_BOOT_PIN);
-    gpio_set_dir(QTPY_BOOT_PIN, GPIO_IN);
-
-    neopixel_init();
-    // gpio_put(WS2812_POWER_PIN,true);
-    // gpio_put(WS2812_PIN,true);
-    for (int pin = 0; pin < pin_count; ++pin) {
-        for (int sample = 0; sample < n_samples; ++sample) {
-            uint bit_index = pin + sample * pin_count;
-            uint word_index = bit_index / record_size_bits;
-            // Data is left-justified in each FIFO entry, hence the (32 - record_size_bits) offset
-            uint word_mask = 1u << (bit_index % record_size_bits + 32 - record_size_bits);
-            led_status = buf[word_index] & word_mask ? 1 : 0;
-            //neopixel_init();
-            if(led_status == 0) { // 
-                gpio_put(WS2812_POWER_PIN, true);
-                gpio_put(WS2812_PIN, true);
-                neopixel_set_rgb(0x00ff0000);
-                // sleep_ms(1000);
-            } else { 
-                gpio_put(WS2812_POWER_PIN, true);
-                gpio_put(WS2812_PIN, true);
-                neopixel_set_rgb(0x000000ff);  //if 0, LED dim
-                // sleep_ms(1000);
-            }
-
-        }
-         printf("\n");
     }
 }
 
@@ -202,6 +150,12 @@ void blink_capture_buf(const uint32_t *buf, uint pin_base, uint pin_count, uint3
 
 int main() {
     stdio_init_all();
+    gpio_init(WS2812_POWER_PIN);
+    gpio_set_dir(WS2812_POWER_PIN,true);
+
+    gpio_init(QTPY_BOOT_PIN);
+    gpio_set_dir(QTPY_BOOT_PIN, GPIO_IN);
+
     while(stdio_usb_connected()!=true);
     printf("Waiting\n");
     //sleep_ms(10000);
@@ -232,26 +186,6 @@ int main() {
 
     logic_analyser_init(pio, sm1, CAPTURE_PIN_BASE, CAPTURE_PIN_COUNT, 64.f);
 
-
-    // printf("Starting PWM example\n");
-    // // PWM example: -----------------------------------------------------------
-    // gpio_set_function(CAPTURE_PIN_BASE, GPIO_FUNC_PWM);
-    // gpio_set_function(CAPTURE_PIN_BASE + 1, GPIO_FUNC_PWM);
-    // // Topmost value of 3: count from 0 to 3 and then wrap, so period is 4 cycles
-    // pwm_hw->slice[0].top = 3;
-    // // Divide frequency by two to slow things down a little
-    // pwm_hw->slice[0].div = 4 << PWM_CH0_DIV_INT_LSB;
-    // // Set channel A to be high for 1 cycle each period (duty cycle 1/4) and
-    // // channel B for 3 cycles (duty cycle 3/4)
-    // pwm_hw->slice[0].cc =
-    //         (1 << PWM_CH0_CC_A_LSB) |
-    //         (3 << PWM_CH0_CC_B_LSB);
-    // // Enable this PWM slice
-    // pwm_hw->slice[0].csr = PWM_CH0_CSR_EN_BITS;
-    // ------------------------------------------------------------------------
-
-    // The logic analyser should have started capturing as soon as it saw the
-    // first transition. Wait until the last sample comes in from the DMA.
    int i = 0;
 
     while(true){
@@ -264,8 +198,6 @@ int main() {
             printf("dma passed\n");
             print_capture_buf(capture_buf, CAPTURE_PIN_BASE, CAPTURE_PIN_COUNT, CAPTURE_N_SAMPLES, i);
             printf("print capture passed\n");
-            blink_capture_buf(capture_buf, CAPTURE_PIN_BASE, CAPTURE_PIN_COUNT, CAPTURE_N_SAMPLES);
-            printf("blink capture passed\n");
             sleep_ms(1000);
             i = i+1;
 
@@ -279,3 +211,6 @@ int main() {
     }
 
 }
+
+
+//                  cd pico/pico-examples/build/pio_sequencer
