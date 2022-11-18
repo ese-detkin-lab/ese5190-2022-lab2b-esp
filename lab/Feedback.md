@@ -7,7 +7,7 @@ Firstly, what's the definition for "timestamped"? How should it be represented i
 It can be in many forms ![IMG_C084660CB55E-1](https://user-images.githubusercontent.com/84453030/202598439-eaa7dae1-8696-42e8-a85a-cab10f8205a9.jpeg)
 And more importantly, what's the unit of each timestamp? Should it be in the machines absolute time(ns), the PIO cycle(1,2,3,4...), or other cycles? I think timing is very immportant in embedded design, it would be helpful if different unit and measurement of time could be discussed more.
 
-Secondly, the instruction can be more detail. We didn't know the goal is to modify the data sampling rule before push them to DMA until Wednesday midnight.
+Secondly, the instruction can be more detail. We didn't know the goal is to modify the data sampling rule *before push them to DMA* until Wednesday midnight.
 <img width="780" alt="image" src="https://user-images.githubusercontent.com/84453030/202599582-a1660402-eea2-4ddb-b4aa-d7d52ddfa4b9.png">
 
 I spent lots of time "guessing" in which step I should adjust the sampling rate and capture the change. Now my understanding is pin --> ISR --> RX FIFO --> through DMA to PC. I still don't know if it's correct. The extra credit description above is the clearest instruction I've seen so far. If it can be in the original lab I believe we won't waste time doing irrelevant data processing on the wrong track. So as in part 7.
@@ -22,11 +22,20 @@ I was stucked in where to start to use PIO in my original sequencer, and I didn'
 
 Some instructions like "1. Go to xxxx.pio and try to understand line 20 to line 45 2. Create a sequencer.pio to include the pio r/w function 3. Go to your sequencer to change the direct r/w function to pio_r/w"  would help.
 
+Similar in part 8,
+For example, 
+#### "Use the capabilities of your sequencer to implement the ADPS9960 protocol and control the sensor."
+<img width="628" alt="image" src="https://user-images.githubusercontent.com/84453030/202734660-6a779d28-6522-44ec-b22c-f8d326fc198a.png">
+More definition and clarify are needed for "one-off PIO implementation". I am confused what is called one-off pio and what's the difference from using sequencer. As from part 7, the sequencer included the pio low level functions, and the i2c.pio also has pio in it. I would appreciate it exactly in what sequence/steps the data/instructions should flow.
+
 And I really appreciate the professors' patience to answering questions!
 
 
 ### Which parts of the lab have you found most difficult to implement? Again, be specific, citing any parts of the lab materials & your own code that are relevant to your answer.
-I had difficulty in getting python script and c code working together in the sequencer part, because I have never use two different languages and platforms in one project before. However, after clarifying the duty for C and python, like cutting the project to two parts, it became clear. 
+I had difficulty in getting python script and c code working together in the sequencer part, because I have never use two different languages and platforms in one project before. However, after clarifying the duty for C and python, like cutting the sequencer to two parts, it became clear. So I hope the instruction could give us more direction, like
+#### 1. Creat a python script, import the pyserial library, use it to connect and take output from serial console
+#### 2. Get your C file run, instead of open minicom as before, run your python script and see the original minicom output in your python end.
+#### 3. Start from there, try use python to generate .csv file, and write into the board with your python script, etc.
 
 Another task that hold me back is the PIO related part mentioned before. I think I need deeper understanding for the RP2040 memory structure, how pio, dma work together and the data's flowing path, to better do the lab. I have read the datasheet, but the description there is quite vague and general, and PIO is such unique that there's no much information I could find when google it. I would be really grateful if more resources can be shared.
 
