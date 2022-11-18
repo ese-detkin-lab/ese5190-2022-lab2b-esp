@@ -6,6 +6,12 @@ Part 7 TODO:
 
 2. Utilizing the logic analyzer to display any GPIO pin's logic levels through redefining the specific pin setting.
 
-3. C code(pio_sequencer.c) outputs strings in the format of: (timestamp, 1/0). It then communicates with Python which takes in the 
-    timestamp
+3. Like in the part 6 pioscope, it will only capture the information when 'boot' button is pressed, otherwise it awaits for the next press.
+
+[Extra Credit] 4. Only when a change in value is detected, the PIO will push data to DMA. Otherwise, it will wait for the next change.
+
+[Extra Credit] 4. C code(pio_sequencer.c) outputs strings in the format of: (timestamp, 1/0). It then communicates with Python which takes in the (timestamp, 1/0) and store it into a csv file.
     
+** An gif illustrating writing to python then storing into csv file based on the communication between RP2040 and APDS 9960 is attached at the following link:
+
+
