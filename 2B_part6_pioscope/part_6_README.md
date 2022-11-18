@@ -14,16 +14,15 @@ Functionalities achieved:
 1. Utilizing the logic analyzer to display any GPIO pin's logic levels through redefining the specific pin setting with timestamp 
     included.
 
-2. Replaying the GPIO pin's behavior through 2 ways: a. through logic analyzer waves, b. through LED blinking(red-1, blue=0)
+2. Replaying the GPIO pin's behavior through logic analyzer waves.
 
-3. The traces with time stamp will only be displayed when 'boot' button is pressed. When 'boot' is not pressed, the system awaits for
-    next press.
+3. The traces with time stamp will only be displayed when 'boot' button is pressed. When 'boot' is not pressed, the system awaits for next press.
 
-3. When displaying the logic analyzer waves, * means that no change has been detected in value, the number follows means the 
+4. When displaying the logic analyzer waves, * means that no change has been detected in value, the number follows means the 
     clock cycle it keeps unchanged. Only the first "-" or "_" will be displayed. 
     For example, "-----" will be displayed as: "-****4".
     
-4. When running with a second QT Py to the Stemma Qt Bus of ADPS9960, the detailed SDA and SCL Line of I2C are demonstrated. 
+5. When running with a second QT Py to the Stemma Qt Bus of ADPS9960, the detailed SDA and SCL Line of I2C are demonstrated. 
     Of course, the lab 1 Python code is used to run the ADPS9960 so that it is running under the I2C protocol.
     
     The link for the gif for 'connect a second Qt Py to the Stemma Qt bus of an ADPS9960 that's attached to a first Qt Py running 
