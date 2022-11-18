@@ -14,4 +14,8 @@ Part 7 TODO:
     
 ** An gif illustrating writing to python then storing into csv file based on the communication between RP2040 and APDS 9960 is attached at the following link:
 
+https://github.com/skyfall88888/ese5190-2022-lab2b-esp-YF/blob/main/2B_part7_pio_sequencer/p7.gif
+
+** The output csv file(which initially was blank) is attached in the following link:
+
 
