@@ -1,3 +1,21 @@
+# Update: This repo contains the LAB 2B and the relavant lab questions!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Proposal for ESE 519 Lab 2B—Gesture Sensing
 
 
