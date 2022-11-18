@@ -1,3 +1,5 @@
+# Part 8: apds protocol
+
 TODO:
 
 1. Use the capabilities of your sequencer to implement the ADPS9960 protocol and control the sensor.
