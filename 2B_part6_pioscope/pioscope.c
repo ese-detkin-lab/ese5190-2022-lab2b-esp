@@ -1,5 +1,5 @@
 /**
-Part 6 and Part 7
+Part 6
 */
 
 #include <stdio.h>
@@ -15,6 +15,8 @@ Part 6 and Part 7
 
 #define WS2812_PIN 12
 #define WS2812_POWER_PIN 11
+#define QTPY_BOOT_PIN 21
+
 
 // Some logic to analyse:
 #include "hardware/structs/pwm.h"
@@ -26,6 +28,7 @@ const uint TRIGGER_PIN = 21;
 
 volatile uint32_t previous_buf = 0;
 uint32_t current_capture = 0;
+int button_is_pressed;
 //int results[100000] = {-1};
 // int one = 1;
 // int *ptr_one;    //indicate a change
@@ -159,8 +162,13 @@ void blink_capture_buf(const uint32_t *buf, uint pin_base, uint pin_count, uint3
     // Each FIFO record may be only partially filled with bits, depending on
     // whether pin_count is a factor of 32.
     uint record_size_bits = bits_packed_per_word(pin_count);
+    stdio_init_all();
+
     gpio_init(WS2812_POWER_PIN);
     gpio_set_dir(WS2812_POWER_PIN,true);
+
+    gpio_init(QTPY_BOOT_PIN);
+    gpio_set_dir(QTPY_BOOT_PIN, GPIO_IN);
 
     neopixel_init();
     // gpio_put(WS2812_POWER_PIN,true);
@@ -246,27 +254,28 @@ int main() {
     // first transition. Wait until the last sample comes in from the DMA.
    int i = 0;
 
-    while(i < 10){
-        printf("Arming trigger\n");
-        logic_analyser_arm(pio, sm1, dma_chan, capture_buf, buf_size_words, TRIGGER_PIN, true);
-        printf("logic analyser arm passed\n");
-        sleep_ms(100);
-        dma_channel_wait_for_finish_blocking(dma_chan);
-        printf("dma passed\n");
-        sleep_ms(100);
-        print_capture_buf(capture_buf, CAPTURE_PIN_BASE, CAPTURE_PIN_COUNT, CAPTURE_N_SAMPLES, i);
-        printf("print capture passed\n");
-        sleep_ms(100);
-        blink_capture_buf(capture_buf, CAPTURE_PIN_BASE, CAPTURE_PIN_COUNT, CAPTURE_N_SAMPLES);
-        printf("blink capture passed\n");
-        sleep_ms(100);
+    while(true){
+        if (gpio_get(QTPY_BOOT_PIN) == 0) { // poll every cycle, 0 = "pressed"
 
-        i = i+1;
-        //print_array(results);
+            printf("Arming trigger\n");
+            logic_analyser_arm(pio, sm1, dma_chan, capture_buf, buf_size_words, TRIGGER_PIN, true);
+            printf("logic analyser arm passed\n");
+            dma_channel_wait_for_finish_blocking(dma_chan);
+            printf("dma passed\n");
+            print_capture_buf(capture_buf, CAPTURE_PIN_BASE, CAPTURE_PIN_COUNT, CAPTURE_N_SAMPLES, i);
+            printf("print capture passed\n");
+            blink_capture_buf(capture_buf, CAPTURE_PIN_BASE, CAPTURE_PIN_COUNT, CAPTURE_N_SAMPLES);
+            printf("blink capture passed\n");
+            sleep_ms(1000);
+            i = i+1;
+
+        } else {
+            continue;
+        }
+
+
+
         
     }
 
 }
-
-
-//                  cd pico/pico-examples/build/pioscope
