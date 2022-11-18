@@ -1,3 +1,14 @@
+I would like to conclude all the write-up with a precise point: the question/confusion I had most is: what exactly should I do to achieve this? For 
+example, if I was asked to use PIO to write I2C protocol for APDS9960. Instead of being told: "Use PIO to implement the ADPS9960 protocol and control the
+sensor", I would like to be told exactly what I should do: "first, understand pio_i2c.c to get a general idea of how PIO can be used to construct I2C
+protocol. Then, go to logic_analyzer example to get a more in-depth understanding of what PIO is capable of. Then look at this diagram,  which is the 
+general workflow of PIO (https://github.com/skyfall88888/ese5190-2022-lab2b-esp-YF/blob/main/Lab_question_figure.jpeg). Lastly, you should try to combine
+abcde.c file and 12345.c file and modify using PIO module."
+
+These kinds of instructions do not have to be given for every single part of the lab. But for the very first ones, for example when first introducing
+PIO to us, they will definitely help.
+
+
 1. Which parts of the lab specification have you found most confusing or difficult to understand? Be specific, and quote any parts of the lab description 
   relevant to your answer (e.g., "modify the PIO/DMA logic analyzer example to record a timestamped trace of an RP2040-ADPS9960 exchange while the BOOT 
   button is pressed.") I will make particular notice of anything that seems underspecified (e.g., words whose meaning is not clear from context, or 
@@ -17,11 +28,11 @@ record a trace of this exchange"
   1. The sdk manual/rp2040 datasheet has some explanation and clarification for this PIO/DMA logic analyzer example. However, taking DMA as example, the 
   explanation was simply: 
   
-  "RP2040 is equipped with a powerful direct memory access unit (DMA), which can transfer data for you in the
-background. Suitably programmed, the DMA can make quite long sequences of transfers without supervision. Up to one
-word per system clock can be transferred to or from a PIO state machine, which is, to be quite technically precise, more
-bandwidth than you can shake a stick at. The bandwidth is shared across all state machines, but you can use the full
-amount on one state machine."
+            "RP2040 is equipped with a powerful direct memory access unit (DMA), which can transfer data for you in the
+          background. Suitably programmed, the DMA can make quite long sequences of transfers without supervision. Up to one
+          word per system clock can be transferred to or from a PIO state machine, which is, to be quite technically precise, more
+          bandwidth than you can shake a stick at. The bandwidth is shared across all state machines, but you can use the full
+          amount on one state machine."
 
   This is a very general, broad and vague explanation of DMA. It does point out what DMA is, but with no detailed instruction on how it should be 
   configured, setup, run etc. 
@@ -35,23 +46,35 @@ amount on one state machine."
   I know. Till now, I do not have any feedback on the assignments, but thats not the point. The point is, I do not even know if my understanding is 
   correct. 
   
-  For example, I later found this diagram very helpful: 
+  For example, I later found this diagram very helpful: https://github.com/skyfall88888/ese5190-2022-lab2b-esp-YF/blob/main/Lab_question_figure.jpeg
   
-  
-  
-  
+  After watching repeatedly a lot of the cornell course recordings, I barely start to understand the underlying workflow of PIO.
   
   
   
 2. Which lab topics have you found most confusing or difficult to understand? E.g., "serial communication with Python," "aliased bitwise operations," 
     "programming the PIO," etc. Be specific, and describe any lingering areas of confusion and/or anything that has helped you navigate them.
     
+    I feel like PIO has been occupying a very large portion of the labs till far. I would say that is also the topic that confuses me the most. When I 
+    was asked to "programe with PIO", I had no clue what exactly I should do. 
+    For examples, some confusions I had:
+    1. modify the entire .pio files, write the assembly codes and the c file?----> If so, the super-complicated timing considerations and assembly code
+      has drown me.
+      
+    2. What exactly do I need to do to program with PIO module, which parts do I need to modify? How should I setup FIFO, SM, then pull/push data from/to
+        ISR/OSR?
+        
+    etc.
     
     
     
 3. Which parts of the lab have you found most difficult to implement? Again, be specific, citing any parts of the lab materials & your own code that are 
   relevant to your answer.
   
+  Lab 2a write-up questions, lab 2b involving dma/PIO because I think most student lack the basic understanding of what these are and how they work.
+  
   
 4. What steps have you taken to resolve these difficulties? Any other barriers you have faced to completing this assignment? Mention any students, repos, 
   or other resources you have found helpful in completing the lab so far.
+  
+  I turned to the cornell course suggested, which gives a rather detailed walk-through of the different hardware functions for RP2040.
