@@ -1,3 +1,5 @@
+# Part 6---Pioscope detailed explanation
+
 TODO:
 
 1. modify the PIO/DMA logic analyzer example to record a timestamped trace of an RP2040-ADPS9960 exchange while the BOOT button is 
