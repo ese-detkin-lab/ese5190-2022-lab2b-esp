@@ -1,7 +1,8 @@
 ### TODO:
 
 - modify your sequencer to use the PIO as its primary I/O engine, including the ability to R/W any register 
-
+## Code
+Modify the code in part 4 to use the PIO to R/W
 ```
 #include <stdio.h>
 #include <stdlib.h>
@@ -185,4 +186,5 @@ int main() {
     }
 }
 ```
-
+## Result
+The result is same as part 4
