@@ -191,5 +191,5 @@ if __name__ == "__main__":
 
 
 ## Result
-The txt file can 
+The test.txt file write the button signal. 
 It can record the frequency of the button. It also can replay, speed up and slow down the recorded frequency. https://youtube.com/shorts/Lp8wNPlwWVQ
