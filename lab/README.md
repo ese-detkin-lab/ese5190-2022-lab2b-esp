@@ -19,3 +19,7 @@ Outline:
 - EC_pwm_scope
 - EC_socket_server
 - EC_speaker
+
+The most significant parts of the lab specification I found most confusing or difficult to understand is the C code because I didn't learn it before.
+
+The lab topic I found most confusing is the serial communication with Python.
