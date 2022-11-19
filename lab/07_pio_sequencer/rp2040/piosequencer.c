@@ -19,7 +19,7 @@
 typedef volatile uint32_t* regaddr;
 
 
-// defines which register to use as input/output for the squencer, and if that input is atomic
+// defines which register to use as input/output for the sequencer, and if that input is atomic
 typedef struct {
     volatile uint32_t* address;
     uint32_t mask;
@@ -35,6 +35,7 @@ typedef struct {
 #define STORAGE_BUFFER_LENGTH 1000
 typedef struct {
     //datapoint data[STORAGE_BUFFER_LENGTH];
+    uint32_t addresses[STORAGE_BUFFER_LENGTH];
     uint32_t data[STORAGE_BUFFER_LENGTH];
     uint32_t timestamps[STORAGE_BUFFER_LENGTH];
     uint32_t masks[STORAGE_BUFFER_LENGTH];
@@ -44,6 +45,7 @@ typedef struct {
 } seqstorage;
 
 const seqstorage STORAGE_INIT = {.index = 0, .recordlen = 0};
+seqstorage store;
 
 //only track off/on for each color and dim/bright for all colors, let's not go crazy...
 typedef struct {
@@ -85,8 +87,8 @@ bool write_event_to_storage(seqstorage* store, uint32_t data, inoutreg* reg) {
     //if the data in this event is the same as the data in the last recorded point, do not store it
     if ((store->index != 0) && (store->data[store->index - 1] == data)) {return (store->index < STORAGE_BUFFER_LENGTH);}
     
-    datapoint point = {.delta = absolute_time_diff_us(store->starttime, get_absolute_time()), .value = data, .reg = *reg};
     store->data[store->index] = data;
+    store->addresses[store->index] = reg->address;
     store->timestamps[store->index] = absolute_time_diff_us(store->starttime, get_absolute_time());
     store->recordlen = store->index;
     store->index++;
@@ -189,50 +191,71 @@ bool record_sequence(inoutreg* inputreg, seqstorage* store, uint32_t serial) {
     return continuerecording;
 }
 
-//call every loop while replaying. Two LED options are mutually exclusive
-//return false when finished
-bool replay_sequence(inoutreg* outputreg, seqstorage* store, ledstate* state) {
-    uint32_t data;
-    bool newdata = false;
-    if(read_event_from_storage(store, &data, outputreg, &newdata, OUTPUT_SETTINGS.scale)){
-        if (newdata) {
-            if (OUTPUT_SETTINGS.led_brightness) {
-                state->is_bright = !!data;
-                set_led_state(state);
-            }
-            else if (OUTPUT_SETTINGS.led_color) {
-                if (!(!!data)) {
-                    ledstate temp = *state;
-                    state->red = temp.blue;
-                    state->green = temp.red;
-                    state->blue = temp.green;
-                    set_led_state(state);
-                }
-            }
-            if (OUTPUT_SETTINGS.register_write) {
-                write_register_value(outputreg, data);
-            }
-            if (OUTPUT_SETTINGS.serial_out) {
-                putchar(!!data ? '1' : 0);
-            }
-        }
-        return true;
-    }
-    else {
-        return false;
-    }
+
+void replay_sequence() {
+
+    pio_restart_sm_mask(pio0, 0xf);
+    pio_enable_sm_mask_in_sync(pio0, 0xf);
+
+    //TODO: need to reset DMAs that may be running
+
 }
 
 void pio_tx_rx_init() {
     PIO pio = pio0;
     uint sm = 0;
+    uint dma = dma_claim_unused_channel(true);
 
-    uint offset = pio_add_program(pio, &sequencer_tx_program);
-    sequencer_tx_init(pio, sm, offset);
+    uint offset = pio_add_program(pio, &sequencer_tx_addrs_vals_program);
+    sequencer_tx_addrs_vals_init(pio, sm, offset, dma);
 
-    offset = pio_add_program(pio, &sequencer_rx_program);
-    sequencer_rx_init(pio, sm, offset);
-    
+    offset = pio_add_program(pio, &sequencer_tx_timestamps_program);
+    sequencer_tx_timestamps_init(pio, sm+2, offset);
+
+    offset = pio_add_program(pio, &sequencer_tx_pins_program);
+    sequencer_tx_pins_init(pio, sm+3, offset);
+
+    //address struct -> SM0 TX FIFO
+    dma = dma_claim_unused_channel(true);
+    dma_channel_config c = dma_channel_get_default_config(dma);
+    channel_config_set_read_increment(&c, true);
+    channel_config_set_write_increment(&c, false);
+    channel_config_set_dreq(&c, pio_get_dreq(pio, sm, false));
+
+    dma_channel_configure(dma, &c,
+        &pio->txf[sm],      // Destination pointer
+        store.addresses,    // Source pointer
+        65535u,              // Number of transfers. Set to "a lot"
+        true                // Start immediately
+    );
+
+    //values struct -> SM1 TX FIFO
+    dma = dma_claim_unused_channel(true);
+    c = dma_channel_get_default_config(dma);
+    channel_config_set_read_increment(&c, true);
+    channel_config_set_write_increment(&c, false);
+    channel_config_set_dreq(&c, pio_get_dreq(pio, sm+1, false));
+
+    dma_channel_configure(dma, &c,
+        &pio->txf[sm+1],    // Destination pointer
+        store.data,         // Source pointer
+        65535u,             // Number of transfers. Set to "a lot"
+        true                // Start immediately
+    );
+
+    //timestamps struct -> SM1 TX FIFO
+    dma = dma_claim_unused_channel(true);
+    c = dma_channel_get_default_config(dma);
+    channel_config_set_read_increment(&c, true);
+    channel_config_set_write_increment(&c, false);
+    channel_config_set_dreq(&c, pio_get_dreq(pio, sm+2, false));
+
+    dma_channel_configure(dma, &c,
+        &pio->txf[sm+2],    // Destination pointer
+        store.timestamps,   // Source pointer
+        65535u,             // Number of transfers. Set to "a lot"
+        true                // Start immediately
+    );
 }
 
 void report_error(char* msg) {
@@ -259,7 +282,7 @@ int main() {
     inoutreg outputregister = {(volatile uint32_t*)(SIO_BASE | SIO_GPIO_OUT_XOR_OFFSET), QTPY_GPIO_A0_BITMASK, true};
 
     //init storage struct
-    seqstorage store = STORAGE_INIT;
+    store = STORAGE_INIT;
 
     ledstate LED_STATE = {false, false, false, false};
 
@@ -358,6 +381,7 @@ int main() {
                 case 'P':
                     playbackactive = true; //start playback
                     store.index = 0;
+                    replay_sequence();
                     putchar('P');
                     int opt = getchar();
                     switch (opt) {
@@ -408,7 +432,8 @@ int main() {
             if (!recordactive) {putchar('x');}
         }
         if (playbackactive) {
-            playbackactive = replay_sequence(&outputregister, &store, &LED_STATE);
+            //playbackactive = dma_channel_is_busy() //TODO: indicate when playback is over (use status of timestamp DMA)
+            // how to know when it's finished if "number of transfers" is arbitrarily high?
             if (!playbackactive && loopplayback) {
                 playbackactive = true;
                 store.index = 0;
