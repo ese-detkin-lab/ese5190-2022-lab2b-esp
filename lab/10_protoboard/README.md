@@ -2,7 +2,7 @@
 
 Add support for your custom circuit board to your sequencer, and give a demo.
 
-## Components used for protoboard work
+## I2C Prototype
 In previous labs, we have done a lot which applied I2C. For example,
 
 We used distance sensor to design a game. Computer generates a matrix with all 0 except one 1. As cursor move up, down, left or right in the matrix according to gesture tested by APDS-9960, users can use gesture to move cursor to approach 1. After approaching 1, users move finger twice around APDS-9960, the keyboard will delete 1 and type 0. At the end of the game, all elements in matrix are 0.
