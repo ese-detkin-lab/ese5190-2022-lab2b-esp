@@ -17,7 +17,7 @@ Create a 'sequencer' that allows you to record BOOT button presses and play them
 ### Workflow
 1. We checked the output in minicom to see the data successfully come out of registers
 
-2. We created a python script using PySerial library to build our "python minicom"
+2. We created a python script using PySerial library to build our "python minicom". Firstly it will ask user if he wants to record(1), replay(2), or quit(0), then it will start the function accordingly.
 
 3. We adjusted the format of printf in C code, made it print in format: timestamp, 0 or 1
 
@@ -27,7 +27,8 @@ this_row = str(this_row)[2:-5]
 this_row = this_row.split(',')
 ```
 5. We used python to generate a .csv file and input it as value and timestamp:
-<img width="115" alt="image" src="https://user-images.githubusercontent.com/84453030/202829995-35bfc95a-f0f9-4674-9a1e-98ffc1cbfc1b.png">
+<img width="114" alt="image" src="https://user-images.githubusercontent.com/84453030/202830891-14b98c7b-a878-48a8-87aa-612f28d71d7c.png">
+
 6. In reverse, we can input the values in the csv file back to the sequencer.c, and replay it in LED.
 
 https://github.com/Thea-E/ese5190-2022-lab2b-esp/blob/main/lab/03_sequencer/sequencer.gif
