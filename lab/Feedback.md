@@ -7,10 +7,10 @@ Firstly, what's the definition for "timestamped"? How should it be represented i
 It can be in many forms ![IMG_C084660CB55E-1](https://user-images.githubusercontent.com/84453030/202598439-eaa7dae1-8696-42e8-a85a-cab10f8205a9.jpeg)
 And more importantly, what's the unit of each timestamp? Should it be in the machines absolute time(ns), the PIO cycle(1,2,3,4...), or other cycles? I think timing is very immportant in embedded design, it would be helpful if different unit and measurement of time could be discussed more.
 
-Secondly, the instruction can be more detail. We didn't know the goal is to modify the data sampling rule *before push them to DMA* until Wednesday midnight.
+Secondly, the instruction can be more detail. 
 <img width="780" alt="image" src="https://user-images.githubusercontent.com/84453030/202599582-a1660402-eea2-4ddb-b4aa-d7d52ddfa4b9.png">
 
-I spent lots of time "guessing" in which step I should adjust the sampling rate and capture the change. Now my understanding is pin --> ISR --> RX FIFO --> through DMA to PC. I still don't know if it's correct. The extra credit description above is the clearest instruction I've seen so far. If it can be in the original lab I believe we won't waste time doing irrelevant data processing on the wrong track. So as in part 7.
+I spent lots of time "guessing" in which step I should adjust the sampling rate and capture the change. Now my understanding is pin --> ISR --> RX FIFO --> through DMA to PC. I still don't know if it's correct. Until I saw the extra credit description above, I start to know the right way is to modify the data sampling rule *before push them to DMA*. This requirement is more clear than the original one. 
 
 
 ### Which lab topics have you found most confusing or difficult to understand? E.g., "serial communication with Python," "aliased bitwise operations," "programming the PIO," etc. Be specific, and describe any lingering areas of confusion and/or anything that has helped you navigate them.
@@ -26,7 +26,7 @@ Similar in part 8,
 For example, 
 #### "Use the capabilities of your sequencer to implement the ADPS9960 protocol and control the sensor."
 <img width="628" alt="image" src="https://user-images.githubusercontent.com/84453030/202734660-6a779d28-6522-44ec-b22c-f8d326fc198a.png">
-More definition and clarify are needed for "one-off PIO implementation". I am confused what is called one-off pio and what's the difference from using sequencer. As from part 7, the sequencer included the pio low level functions, and the i2c.pio also has pio in it. I would appreciate it exactly in what sequence/steps the data/instructions should flow.
+More definition and clarify are needed for "one-off PIO implementation". I am confused what is called one-off pio and what's the difference from using sequencer. As from part 7, the sequencer included the pio low level functions, and the i2c.pio also has pio in it. 
 
 And I really appreciate the professors' patience to answering questions!
 
@@ -37,7 +37,7 @@ I had difficulty in getting python script and c code working together in the seq
 #### 2. Get your C file run, instead of open minicom as before, run your python script and see the original minicom output in your python end.
 #### 3. Start from there, try use python to generate .csv file, and write into the board with your python script, etc.
 
-Another task that hold me back is the PIO related part mentioned before. I think I need deeper understanding for the RP2040 memory structure, how pio, dma work together and the data's flowing path, to better do the lab. I have read the datasheet, but the description there is quite vague and general, and PIO is such unique that there's no much information I could find when google it. I would be really grateful if more resources can be shared.
+Another task that hold me back is the PIO related part mentioned before. I think I need deeper understanding for the RP2040 memory structure, how pio, dma work together and the data's flowing path, to better do the lab. I have read the datasheet, but the description there is quite vague and general, and PIO is such unique that there's no much information I could find when googled it. I would be really grateful if more resources can be shared.
 
 
 ### What steps have you taken to resolve these difficulties? Any other barriers you have faced to completing this assignment? Mention any students, repos, or other resources you have found helpful in completing the lab so far.
