@@ -40,15 +40,17 @@ static inline void sequencer_rx_init(PIO pio, uint sm, uint offset) {
 
 .program sequencer_tx_addrs_vals
 .wrap_target
-    wait 1 irq tx_trigger_irq
+    wait irq tx_trigger_irq
     out isr 32
+    irq clear tx_trigger_irq
 .wrap
 
 % c-sdk {
 #include "hardware/dma.h"
 #include "hardware/gpio.h"
 
-static inline void sequencer_tx_addrs_vals_init(PIO pio, uint smstart, uint offset, uint dma_chanstart) {
+static inline void sequencer_tx_addrs_vals_init(PIO pio, uint addr_sm, uint vals_sm, uint offset, uint addr_dmachan, uint val_dmachan) {
+    uint pins_sm = 3;
     //configure the first PIO State Machine, handles the target register addresses
     pio_sm_config addrs_c = sequencer_tx_addrs_vals_program_get_default_config(offset);
 
@@ -63,34 +65,34 @@ static inline void sequencer_tx_addrs_vals_init(PIO pio, uint smstart, uint offs
     sm_config_set_in_shift(&addrs_c, false, true, 32);
     sm_config_set_fifo_join(&addrs_c, PIO_FIFO_JOIN_NONE);
 
-    pio_sm_init(pio, smstart, offset, &addrs_c);
-    pio_sm_init(pio, smstart+1, offset, &vals_c);
+    pio_sm_init(pio, addr_sm, offset, &addrs_c);
+    pio_sm_init(pio, vals_sm, offset, &vals_c);
 
     //configure first DMA channel (0), transfers addresses from SM0 to WRITE_ADDR of DMA1
-    dma_channel_config set_addr_c = dma_channel_get_default_config(dma_chanstart);
+    dma_channel_config set_addr_c = dma_channel_get_default_config(addr_dmachan);
     channel_config_set_read_increment(&set_addr_c, false);
     channel_config_set_write_increment(&set_addr_c, false);
     channel_config_set_transfer_data_size(&set_addr_c, DMA_SIZE_32);
-    channel_config_set_dreq(&set_addr_c, pio_get_dreq(pio, smstart, false));
+    channel_config_set_dreq(&set_addr_c, pio_get_dreq(pio, addr_sm, false));
 
-    dma_channel_configure(dma_chanstart, &set_addr_c,
-        dma_hw->ch[dma_chanstart + 1].al2_write_addr_trig,    // Destination pointer, this is the the WRITE_ADDR_TRIG of dma_chanstart+1
-        &pio->rxf[smstart],                         // Source pointer
-        65535u,                                     // Number of transfers. How many? Just set to "lots"
+    dma_channel_configure(addr_dmachan, &set_addr_c,
+        &(dma_hw->ch[val_dmachan].al2_write_addr_trig),    // Destination pointer, this is the the WRITE_ADDR_TRIG of dma_chanstart+1
+        &pio->rxf[addr_sm],                         // Source pointer
+        1u,                                     // Number of transfers. How many? Just set to "lots"
         true                                        // Start immediately, still waits for DREQ
     );
 
     //configure the second DMA channel (1), transfers values from SM1 to address set by DMA0/SM0
     //is triggered by DMA0 writing to WRITE_ADDR_TRIG
-    dma_channel_config set_val_c = dma_channel_get_default_config(dma_chanstart + 1);
+    dma_channel_config set_val_c = dma_channel_get_default_config(val_dmachan);
     channel_config_set_read_increment(&set_val_c, false);
     channel_config_set_write_increment(&set_val_c, false);
-    channel_config_set_dreq(&set_val_c, pio_get_dreq(pio, smstart + 1, false));
+    channel_config_set_dreq(&set_val_c, pio_get_dreq(pio, vals_sm, false));
 
 
-    dma_channel_configure(dma_chanstart, &set_addr_c,
-        sio_hw->gpio_set,       // Destination pointer, will be overwritten by DMA0. Default to "GPIO_SET"
-        &pio->rxf[smstart + 1], // Source pointer
+    dma_channel_configure(val_dmachan, &set_addr_c,
+        (uint32_t *)0x20004120,     // Destination pointer, will be overwritten by DMA0. Default to "GPIO_SET"
+        &pio->rxf[vals_sm],     // Source pointer
         1u,                     // Number of transfers. One, because we will trigger with the write to WRITE_ADDR_TRIG
         false                   // Start immediately
     );
@@ -103,9 +105,11 @@ static inline void sequencer_tx_addrs_vals_init(PIO pio, uint smstart, uint offs
 
 .wrap_target
     out x 32
+    set pins 1
 loop:
     jmp x-- loop
     irq tx_trigger_irq
+    set pins 0
 .wrap
 
 % c-sdk {
@@ -116,6 +120,7 @@ static inline void sequencer_tx_timestamps_init(PIO pio, uint smstart, uint offs
     sm_config_set_out_shift(&ts_c, false, true, 32);
     sm_config_set_in_shift(&ts_c, false, true, 32);
     sm_config_set_fifo_join(&ts_c, PIO_FIFO_JOIN_NONE);
+    sm_config_set_set_pins(&ts_c, 23, 1);
 
     pio_sm_init(pio, smstart, offset, &ts_c);
 }
@@ -124,7 +129,7 @@ static inline void sequencer_tx_timestamps_init(PIO pio, uint smstart, uint offs
 .program sequencer_tx_pins
 
 .wrap_target
-    out pins 30
+    out pins 32
 .wrap
 
 
@@ -134,8 +139,7 @@ static inline void sequencer_tx_pins_init(PIO pio, uint sm, uint offset) {
     pio_sm_config pins_c = sequencer_tx_pins_program_get_default_config(offset);
 
     sm_config_set_out_shift(&pins_c, false, true, 32);
-    sm_config_set_in_shift(&pins_c, false, true, 32);
-    sm_config_set_fifo_join(&pins_c, PIO_FIFO_JOIN_NONE);
+    sm_config_set_fifo_join(&pins_c, PIO_FIFO_JOIN_TX);
 
     sm_config_set_out_pins(&pins_c, 0, 32);
 

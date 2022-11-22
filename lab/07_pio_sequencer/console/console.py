@@ -17,7 +17,7 @@ def send_sequence(filename):
             #print(dword.encode('ascii'))
             rp2040.write(dword.encode('ascii'))
     rp2040.write(b';')
-    rp2040.timeout = 5
+    
     #print(rp2040.read_until(b';'))
     
     #rp2040.writelines(infile.readlines())
@@ -48,6 +48,9 @@ if __name__ == '__main__':
         rp2040.open()
         
         while(rp2040.isOpen()):
+            rp2040.timeout = 0.5
+            print(rp2040.readline())
+            rp2040.timeout = 65535
             usr_input = input('Select Option:')
             
             if usr_input == 'X':
@@ -58,12 +61,14 @@ if __name__ == '__main__':
                 print('Finished recording.')
             elif usr_input == 'P':
                 rp2040.write(b'P')
-                opt = input('Select playback speed \n1: 2x\n2: 0.5x\n3: 0.25x\n4: 1x\n> ')
-                rp2040.write(opt.encode('ascii'))
+                #opt = input('Select playback speed \n1: 2x\n2: 0.5x\n3: 0.25x\n4: 1x\n> ')
+                #rp2040.write(opt.encode('ascii'))
                 rp2040.read_until(b'P')
                 print('Start playback...')
-                rp2040.read_until(b'p') # P will be sent as ACK, p will be sent when playback finished
-                print('Playback finished')
+                while (1):
+                    print(rp2040.readline())
+                #rp2040.read_until(b'p') # P will be sent as ACK, p will be sent when playback finished
+                #print('Playback finished')
             elif usr_input == 'O':
                 rp2040.write(b'O')
                 rp2040.read_until(b'o')
@@ -97,13 +102,19 @@ if __name__ == '__main__':
             elif usr_input == 'U':
                 rp2040.write(b'U')
                 rp2040.read_until(b'U')
-                upload_sequence('lab/04_slow_motion/saved_sequence_read_back.csv')
+                upload_sequence('lab/07_pio_sequencer/saved_sequence_read_back.csv')
                 rp2040.read_until(b'u')
                 print('Sequence saved')
+            elif usr_input == 'DN':
+                rp2040.write(b'D')
+                rp2040.read_until(b'D')
+                rp2040.write(b';')
+                rp2040.read_until(b'd')
+                print('Empty sequence downloaded to device')
             elif usr_input == 'D':
                 rp2040.write(b'D')
                 rp2040.read_until(b'D')
-                send_sequence('lab/04_slow_motion/saved_sequence.csv')
+                send_sequence('lab/07_pio_sequencer/saved_sequence.csv')
                 rp2040.read_until(b'd')
                 print('Sequence downloaded to device')
             else:
