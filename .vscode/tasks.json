@@ -4,7 +4,7 @@
 		{
 			"type": "shell",
 			"label": "picotool: install",
-			"command": "picotool reboot -f -u ; Start-Sleep -Seconds 1 ; picotool load \\\"${command:cmake.getLaunchTargetPath}\\\".Replace('.elf','.uf2') ; picotool reboot",
+			"command": "picotool reboot -f -u ; Start-Sleep -Seconds 1 ; picotool load \\\"${command:cmake.launchTargetPath}\\\".Replace('.elf','.uf2') ; picotool reboot",
 			"problemMatcher": [],
 			"detail": "picotool CMake target installer task",
 			"group": {
