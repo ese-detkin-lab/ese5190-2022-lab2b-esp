@@ -8,7 +8,6 @@ Toggle the Qt Py's Neopixel LED when the BOOT button is pressed, using only dire
 #include <stdlib.h>
 #include "pico/stdlib.h"
 #include "ws2812.h"
-
 #include "pico/stdlib.h"
 #include "hardware/pio.h"
 #include "hardware/clocks.h"
@@ -27,7 +26,9 @@ Toggle the Qt Py's Neopixel LED when the BOOT button is pressed, using only dire
 #define WS2812_POWER_PIN 11
 #endif
 
-int main() {
+int main()
+{
+    
     stdio_init_all();
 
     PIO pio = pio0;
