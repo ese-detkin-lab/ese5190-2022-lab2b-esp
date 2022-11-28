@@ -2,5 +2,10 @@
 
 Toggle the Qt Py's Neopixel LED when the BOOT button is pressed, using only direct register reads to access the boot button status. You may use the SDK to initialize the board and the pins, and the WS2812 example code to toggle the Neopixel. 
 
+
 ### Registers.c:
-lab/01_registers/registers.c
+https://github.com/Praveen-Raj-u-s/ese5190-2022-lab2b-esp/blob/d4c26d4a6cd7d591de3127db516a7eb6b216701b/lab/01_registers/registers.c
+
+
+### Result(s):
+The inbuilt LED of RP2040 is powered up (glows) for every Boot Button(21) Press. 
