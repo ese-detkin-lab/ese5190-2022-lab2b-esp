@@ -6,3 +6,6 @@ Update your sequencer to be able to slow down and speed up recordings/replay. On
 - give your sequencer the ability to select a range of output rates for both live and recorded input
 
 
+
+### Code:
+https://github.com/Praveen-Raj-u-s/ese5190-2022-lab2b-esp/blob/d74c167b3ef72998f3f9e811e8d904f9ef939688/lab/04_slow_motion/Slow%20Motion.c
