@@ -1,0 +1,32 @@
+py-console-app-notes.txt
+
+Options:
+    1. Start recording (X,x)
+    2. Replay recorded sequence (P)
+    3. Loop recorded sequence (O)
+    4. Upload recorded sequence to computer (U)
+    5. Download new sequence to device (D)
+    6. Select output format 
+    7. Select input format
+
+Output Format:
+    1. LED color (C)
+    2. LED brightness (L)
+    3. Serial data (S)
+    4. Register write (W)
+
+
+Input Format: done
+    1. BOOT button (B,b)
+    2. Serial data (T,t)
+    3. Read from Register (R,r)
+
+
+Specify register:
+Address:
+Mask:
+Atomic?
+
+
+send dwords LSB first
+for register send as addr,mask, one byte for is_binary/atomic

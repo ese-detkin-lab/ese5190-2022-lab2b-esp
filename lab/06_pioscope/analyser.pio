@@ -1,0 +1,40 @@
+
+.define public sync_irq 4
+.define public rx_trigger_irq 0
+
+
+.program sequencer_rx
+    irq wait sync_irq           ; send signal to TX SM to start program
+    jmp entry_point
+record:
+    in x, 32                    ; transfer contents of x scratch register to ISR (autopush)
+    irq rx_trigger_irq          ; send a signal to system interrupt
+.wrap_target 
+entry_point:
+    mov x, y                    ; move x to y
+    mov pins, x                 ; fill x with pin data
+    jmp x != y record           ; if x != y (pins changed state), jump to instruction that saves x to ISR
+.wrap
+
+
+% c-sdk {
+
+#include "hardware/gpio.h"
+
+// Configure the sequencer recorder. Does not call pio_sm_set_enabled() to enable the State Machine
+static inline void sequencer_rx_init(PIO pio, uint sm, uint offset) {
+    pio_sm_config c = sequencer_rx_program_get_default_config(offset);
+
+    sm_config_set_out_pins(&c, 0, 32);
+    sm_config_set_in_pins(&c, 0);
+    sm_config_set_out_shift(&c, false, true, 32);
+    sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_RX);
+
+    pio_set_irq0_source_enabled(pio, pis_interrupt0, true);
+    pio_interrupt_clear(pio, sm);
+
+    pio_sm_init(pio, sm, offset, &c);
+}
+
+%}
+

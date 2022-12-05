@@ -6,3 +6,8 @@ Update your sequencer to be able to slow down and speed up recordings/replay. On
 - give your sequencer the ability to select a range of output rates for both live and recorded input
 
 
+### My Notes
+
+This was a minor change to the previous section's program. The underlying type of the storage array was changed to a structure that also contained timestamp data, and the record/playback functions were tweaked to use the new structure.
+
+

@@ -13,3 +13,8 @@ Create a 'sequencer' that allows you to record BOOT button presses and play them
     - outputs: neopixel color, neopixel brightness, data over serial, register read/write commands
 
 
+### My Notes
+
+Sequencer can save data to file and accept new data from terminal program. Values are entered as hexadecimal values.
+
+
