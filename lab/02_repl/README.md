@@ -8,3 +8,7 @@ Create a REPL to let you read and write RP2040 registers from a console. You sho
 
 ### Code:
 https://github.com/Praveen-Raj-u-s/ese5190-2022-lab2b-esp/blob/695f0aff4d2c17e069c8812fee8bdb1caf27957b/lab/02_repl/REPL.c
+
+
+### Output:
+![REPL](https://user-images.githubusercontent.com/114270637/208324921-4df9bbb3-4fec-40a3-b90a-6e061a65b258.png)
