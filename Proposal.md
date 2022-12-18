@@ -12,3 +12,9 @@ List of Components Requested from Detkin Lab:
 1. STP16NF06 MOSFET,
 2. LEDs 
 3. Resistors - 660Ohm
+
+
+
+### LED REPL Toggle:
+
+![GPIO Led](https://user-images.githubusercontent.com/114270637/208320006-91e6d911-364b-442c-8a1c-2378b9deaed1.gif)
