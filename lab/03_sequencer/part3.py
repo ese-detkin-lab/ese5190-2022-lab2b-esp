@@ -4,7 +4,7 @@ import csv
 import numpy
 import neopixel
 
-ser=serial.Serial('COM4', 115200)
+ser=serial.Serial('COM3', 115200)
 log = numpy.zeros((1001, 1))
 n=0
 
