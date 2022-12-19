@@ -5,3 +5,14 @@
 - record a trace of this exchange
 
 
+
+### Pioscope:
+
+![Part6](https://user-images.githubusercontent.com/114270637/205544042-f03a87dc-6498-4d51-9fa2-b57c5e3f6ed8.png)
+
+
+
+
+
+
+(Worked with Michael Peters for this Part)
